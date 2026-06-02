@@ -184,12 +184,13 @@ export function usePageMeta({ title, description, imageUrl }) {
 }
 
 /** Normalize Google Drive share URLs to thumbnail image URLs.
- *  Uses the thumbnail endpoint which is not subject to the deprecated uc?export=view block. */
-export function normalizeDriveUrl(url) {
+ *  Pass a size string (default 'w900') — use smaller values for cards, larger for OG/hero.
+ *  Common sizes: w400, w600, w900, w1200 */
+export function normalizeDriveUrl(url, size = 'w900') {
   if (!url) return ''
   const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/)
-  if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1200`
+  if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=${size}`
   const m2 = url.match(/id=([a-zA-Z0-9_-]+)/)
-  if (m2) return `https://drive.google.com/thumbnail?id=${m2[1]}&sz=w1200`
+  if (m2) return `https://drive.google.com/thumbnail?id=${m2[1]}&sz=${size}`
   return url
 }

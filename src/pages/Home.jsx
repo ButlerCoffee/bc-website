@@ -351,12 +351,12 @@ export default function Home() {
           <div className="blog-grid">
             {featuredPosts.map(post => {
               const title = post[`title_${lang}`] || post.title_en
-              const imgSrc = post.imageUrl ? normalizeDriveUrl(post.imageUrl) : null
+              const imgSrc = post.imageUrl ? normalizeDriveUrl(post.imageUrl, 'w500') : null
               return (
                 <Link to={`/blog/${post.slug}`} className="post-card" key={post.id}>
                   <div className="post-card__img">
                     {imgSrc
-                      ? <img src={imgSrc} alt={post.imageAlt || title} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                      ? <img src={imgSrc} alt={post.imageAlt || title} style={{ width:'100%', height:'100%', objectFit:'cover' }} loading="lazy" decoding="async" />
                       : null
                     }
                   </div>

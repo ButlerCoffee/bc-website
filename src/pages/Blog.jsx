@@ -50,7 +50,7 @@ export default function Blog() {
             <Link to={`/blog/${hero.slug}`} className="blog-featured">
               <div className="blog-featured__img">
                 {hero.imageUrl
-                  ? <img src={normalizeDriveUrl(hero.imageUrl)} alt={hero.imageAlt || hero[`title_${lang}`]} />
+                  ? <img src={normalizeDriveUrl(hero.imageUrl, 'w900')} alt={hero.imageAlt || hero[`title_${lang}`]} decoding="async" />
                   : <div className="blog-featured__img-placeholder"><span>☕</span></div>
                 }
               </div>
@@ -125,7 +125,7 @@ function PostCard({ post, lang, isEs }) {
     <Link to={`/blog/${post.slug}`} className="post-card">
       <div className="post-card__img">
         {post.imageUrl
-          ? <img src={normalizeDriveUrl(post.imageUrl)} alt={post.imageAlt || title} />
+          ? <img src={normalizeDriveUrl(post.imageUrl, 'w500')} alt={post.imageAlt || title} loading="lazy" decoding="async" />
           : <span style={{ fontSize: '2.2rem', opacity: 0.12 }}>☕</span>
         }
       </div>

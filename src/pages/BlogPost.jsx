@@ -12,21 +12,22 @@ export default function BlogPost() {
 
   const post = getPostBySlug(posts, slug)
 
-  // While loading, show nothing to avoid flash redirect
-  if (loading && !post) return null
-  if (!post) return <Navigate to="/blog" replace />
-
-  const title   = post[`title_${lang}`]   || post.title_en
-  const content = post[`content_${lang}`] || post.content_en
-  const excerpt = post[`excerpt_${lang}`] || post.excerpt_en
+  // Derive values safely — hook must be called before any early returns
+  const title   = post ? (post[`title_${lang}`]   || post.title_en)   : ''
+  const content = post ? (post[`content_${lang}`] || post.content_en) : ''
+  const excerpt = post ? (post[`excerpt_${lang}`] || post.excerpt_en) : ''
   const mins    = readingTime(content)
 
-  // OG + twitter meta tags + document.title for this article
+  // OG + twitter meta tags + document.title — must run before early returns
   usePageMeta({
     title,
     description: excerpt,
-    imageUrl: post.imageUrl ? normalizeDriveUrl(post.imageUrl) : undefined,
+    imageUrl: post?.imageUrl ? normalizeDriveUrl(post.imageUrl, 'w1200') : undefined,
   })
+
+  // While loading, show nothing to avoid flash redirect
+  if (loading && !post) return null
+  if (!post) return <Navigate to="/blog" replace />
 
   // Related posts: same category, excluding current
   const related = posts
@@ -70,9 +71,11 @@ export default function BlogPost() {
             <div className="post-wrap">
               <div className="post-cover__img-wrap">
                 <img
-                  src={normalizeDriveUrl(post.imageUrl)}
+                  src={normalizeDriveUrl(post.imageUrl, 'w900')}
                   alt={post.imageAlt || title}
                   className="post-cover__img"
+                  loading="lazy"
+                  decoding="async"
                 />
                 {post.imageCredit && (
                   <p className="post-cover__credit">{post.imageCredit}</p>
@@ -132,7 +135,7 @@ export default function BlogPost() {
                   <Link key={p.id} to={`/blog/${p.slug}`} className="post-related-card">
                     <div className="post-related-card__img">
                       {p.imageUrl
-                        ? <img src={normalizeDriveUrl(p.imageUrl)} alt={p.imageAlt || t2} />
+                        ? <img src={normalizeDriveUrl(p.imageUrl, 'w500')} alt={p.imageAlt || t2} loading="lazy" decoding="async" />
                         : <span style={{ fontSize: '2rem', opacity: 0.12 }}>☕</span>
                       }
                     </div>
