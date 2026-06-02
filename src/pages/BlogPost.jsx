@@ -30,6 +30,10 @@ export default function BlogPost() {
     ? related
     : posts.filter(p => p.id !== post.id).slice(0, 3)
 
+  // Next post in list (wraps around)
+  const currentIndex = posts.findIndex(p => p.id === post.id)
+  const nextPost = posts[(currentIndex + 1) % posts.length] || null
+
   return (
     <Layout>
 
@@ -124,23 +128,20 @@ export default function BlogPost() {
         </section>
       )}
 
-      {/* ── CTA ─────────────────────────────────────────────────────────── */}
-      <div className="cta-band">
-        <div className="wrap">
-          <h2 className="cta-band__title">
-            {isEs ? '¿Listo para mejorar tu café?' : 'Ready to upgrade your coffee?'}
-          </h2>
-          <p className="cta-band__sub">
-            {isEs
-              ? 'Encuentra el nivel perfecto para ti o tu equipo y recibe café de especialidad cada mes.'
-              : 'Find the right tier for you or your team and get specialty coffee delivered every month.'}
-          </p>
-          <div className="cta-band__actions">
-            <Link to="/subs"    className="btn btn--yellow">{t('start_sub')}</Link>
-            <Link to="/contact" className="btn btn--ghost">{t('contact_us')}</Link>
+      {/* ── NEXT ARTICLE ─────────────────────────────────────────────── */}
+      {nextPost && nextPost.id !== post.id && (
+        <div className="post-next">
+          <div className="wrap post-next__inner">
+            <span className="post-next__label">
+              {isEs ? 'Siguiente artículo' : 'Next article'}
+            </span>
+            <Link to={`/blog/${nextPost.slug}`} className="post-next__link">
+              {nextPost[`title_${lang}`] || nextPost.title_en}
+              <span className="post-next__arrow">→</span>
+            </Link>
           </div>
         </div>
-      </div>
+      )}
 
     </Layout>
   )

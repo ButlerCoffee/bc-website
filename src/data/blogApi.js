@@ -128,12 +128,13 @@ export function renderContent(raw) {
   return isHtml(raw) ? raw : renderMarkdown(raw)
 }
 
-/** Normalize Google Drive share URLs to direct image URLs. */
+/** Normalize Google Drive share URLs to thumbnail image URLs.
+ *  Uses the thumbnail endpoint which is not subject to the deprecated uc?export=view block. */
 export function normalizeDriveUrl(url) {
   if (!url) return ''
   const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/)
-  if (m) return `https://drive.google.com/uc?export=view&id=${m[1]}`
+  if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1200`
   const m2 = url.match(/id=([a-zA-Z0-9_-]+)/)
-  if (m2) return `https://drive.google.com/uc?export=view&id=${m2[1]}`
+  if (m2) return `https://drive.google.com/thumbnail?id=${m2[1]}&sz=w1200`
   return url
 }
