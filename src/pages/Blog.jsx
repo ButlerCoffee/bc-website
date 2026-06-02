@@ -79,7 +79,7 @@ export default function Blog() {
       <section className="section surf-section">
         <div className="wrap">
 
-          {categories.length > 2 && (
+          {categories.length > 1 && (
             <div className="blog-filters">
               {categories.map(cat => (
                 <button

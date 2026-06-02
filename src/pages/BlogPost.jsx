@@ -1,6 +1,6 @@
 import { Link, useParams, Navigate } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
-import { usePosts, getPostBySlug, formatDate, renderContent, normalizeDriveUrl } from '../data/blogApi'
+import { usePosts, getPostBySlug, formatDate, renderContent, normalizeDriveUrl, readingTime, usePageMeta } from '../data/blogApi'
 import Layout from '../components/Layout'
 import './BlogPost.css'
 
@@ -19,6 +19,14 @@ export default function BlogPost() {
   const title   = post[`title_${lang}`]   || post.title_en
   const content = post[`content_${lang}`] || post.content_en
   const excerpt = post[`excerpt_${lang}`] || post.excerpt_en
+  const mins    = readingTime(content)
+
+  // OG + twitter meta tags + document.title for this article
+  usePageMeta({
+    title,
+    description: excerpt,
+    imageUrl: post.imageUrl ? normalizeDriveUrl(post.imageUrl) : undefined,
+  })
 
   // Related posts: same category, excluding current
   const related = posts
@@ -30,63 +38,80 @@ export default function BlogPost() {
     ? related
     : posts.filter(p => p.id !== post.id).slice(0, 3)
 
-  // Next post in list (wraps around)
-  const currentIndex = posts.findIndex(p => p.id === post.id)
-  const nextPost = posts[(currentIndex + 1) % posts.length] || null
-
   return (
     <Layout>
 
-      {/* ── HERO ────────────────────────────────────────────────────────── */}
-      <section className="post-hero">
-        <div className="wrap">
-          <div className="page-hero__eyebrow">
-            <Link to="/blog" className="page-hero__back">{t('back_blog')}</Link>
-            {post.category && <span className="badge">{post.category}</span>}
-          </div>
+      {/* ── OFF-WHITE CANVAS: hero + cover + body ─────────────────────────── */}
+      <div className="post-canvas">
 
-          <h1 className="post-hero__title">{title}</h1>
+        {/* ── HERO ──────────────────────────────────────────────────────── */}
+        <section className="post-hero">
+          <div className="post-wrap">
+            <div className="post-hero__eyebrow">
+              <Link to="/blog" className="post-hero__back">{t('back_blog')}</Link>
+              {post.category && <span className="badge">{post.category}</span>}
+            </div>
 
-          {excerpt && <p className="post-hero__excerpt">{excerpt}</p>}
+            <h1 className="post-hero__title">{title}</h1>
 
-          <div className="post-hero__meta">
-            {post.author   && <span>{post.author}</span>}
-            {post.updatedAt && <span>{formatDate(post.updatedAt, lang)}</span>}
-          </div>
-        </div>
-      </section>
+            {excerpt && <p className="post-hero__excerpt">{excerpt}</p>}
 
-      {/* ── COVER IMAGE ─────────────────────────────────────────────────── */}
-      {post.imageUrl && (
-        <div className="post-cover">
-          <div className="wrap">
-            <div className="post-cover__img-wrap">
-              <img
-                src={normalizeDriveUrl(post.imageUrl)}
-                alt={post.imageAlt || title}
-                className="post-cover__img"
-              />
-              {post.imageCredit && (
-                <p className="post-cover__credit">{post.imageCredit}</p>
-              )}
+            <div className="post-hero__meta">
+              {post.author && <span>{post.author}</span>}
+              {post.updatedAt && <span>{formatDate(post.updatedAt, lang)}</span>}
+              <span>{mins} {isEs ? `min de lectura` : `min read`}</span>
             </div>
           </div>
-        </div>
-      )}
+        </section>
 
-      {/* ── CONTENT ─────────────────────────────────────────────────────── */}
-      <div className="post-body">
-        <div className="wrap post-body__inner">
-          {content
-            ? <div className="post-content" dangerouslySetInnerHTML={{ __html: renderContent(content) }} />
-            : (
-              <div className="post-content post-content--empty">
-                <p>{isEs ? 'Contenido próximamente.' : 'Content coming soon.'}</p>
+        {/* ── COVER IMAGE ───────────────────────────────────────────────── */}
+        {post.imageUrl && (
+          <div className="post-cover">
+            <div className="post-wrap">
+              <div className="post-cover__img-wrap">
+                <img
+                  src={normalizeDriveUrl(post.imageUrl)}
+                  alt={post.imageAlt || title}
+                  className="post-cover__img"
+                />
+                {post.imageCredit && (
+                  <p className="post-cover__credit">{post.imageCredit}</p>
+                )}
               </div>
-            )
-          }
+            </div>
+          </div>
+        )}
+
+        {/* ── CONTENT ───────────────────────────────────────────────────── */}
+        <div className="post-body">
+          <div className="post-wrap">
+            {content
+              ? <div className="post-content" dangerouslySetInnerHTML={{ __html: renderContent(content) }} />
+              : (
+                <div className="post-content post-content--empty">
+                  <p>{isEs ? 'Contenido próximamente.' : 'Content coming soon.'}</p>
+                </div>
+              )
+            }
+
+            {/* ── BYLINE ────────────────────────────────────────────────── */}
+            {(post.author || post.updatedAt) && (
+              <div className="post-byline">
+                <hr className="post-byline__rule" />
+                {post.author && (
+                  <p className="post-byline__author">
+                    {isEs ? 'Escrito por' : 'Written by'} <strong>{post.author}</strong>
+                  </p>
+                )}
+                {post.updatedAt && (
+                  <p className="post-byline__date">{formatDate(post.updatedAt, lang)}</p>
+                )}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+
+      </div>{/* end post-canvas */}
 
       {/* ── MORE POSTS ──────────────────────────────────────────────────── */}
       {suggestions.length > 0 && (
@@ -95,7 +120,7 @@ export default function BlogPost() {
             <div className="sh sh--center">
               <span className="badge">{isEs ? 'Seguir Leyendo' : 'Keep Reading'}</span>
               <h2 className="section-title">
-                {isEs ? 'Más artículos.' : 'More posts.'}
+                {isEs ? 'Más artículos.' : 'More articles.'}
               </h2>
             </div>
 
@@ -126,21 +151,6 @@ export default function BlogPost() {
             </div>
           </div>
         </section>
-      )}
-
-      {/* ── NEXT ARTICLE ─────────────────────────────────────────────── */}
-      {nextPost && nextPost.id !== post.id && (
-        <div className="post-next">
-          <div className="wrap post-next__inner">
-            <span className="post-next__label">
-              {isEs ? 'Siguiente artículo' : 'Next article'}
-            </span>
-            <Link to={`/blog/${nextPost.slug}`} className="post-next__link">
-              {nextPost[`title_${lang}`] || nextPost.title_en}
-              <span className="post-next__arrow">→</span>
-            </Link>
-          </div>
-        </div>
       )}
 
     </Layout>

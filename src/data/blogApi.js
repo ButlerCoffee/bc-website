@@ -128,6 +128,61 @@ export function renderContent(raw) {
   return isHtml(raw) ? raw : renderMarkdown(raw)
 }
 
+/** Estimate reading time in minutes from raw content (HTML or Markdown). */
+export function readingTime(content) {
+  if (!content) return 1
+  const text = content.replace(/<[^>]+>/g, ' ').replace(/[#*_`~\[\]]/g, '').replace(/\s+/g, ' ').trim()
+  const words = text.split(' ').filter(Boolean).length
+  return Math.max(1, Math.round(words / 200))
+}
+
+/** Inject OG + Twitter meta tags into <head> for the current article page.
+ *  Cleans up on unmount so tags don't bleed into other pages. */
+export function usePageMeta({ title, description, imageUrl }) {
+  useEffect(() => {
+    const prevTitle = document.title
+    if (title) document.title = `${title} — Butler Coffee`
+
+    const tags = [
+      { property: 'og:type',               content: 'article' },
+      { property: 'og:title',              content: title },
+      { property: 'og:description',        content: description },
+      { property: 'og:image',              content: imageUrl },
+      { property: 'og:url',               content: window.location.href },
+      { property: 'og:site_name',          content: 'Butler Coffee' },
+      { name:     'twitter:card',          content: 'summary_large_image' },
+      { name:     'twitter:title',         content: title },
+      { name:     'twitter:description',   content: description },
+      { name:     'twitter:image',         content: imageUrl },
+    ]
+
+    const injected = []
+    tags.forEach(({ property, name, content }) => {
+      if (!content) return
+      const attr  = property ? 'property' : 'name'
+      const value = property || name
+      let el = document.querySelector(`meta[${attr}="${value}"]`)
+      const isNew = !el
+      if (isNew) {
+        el = document.createElement('meta')
+        el.setAttribute(attr, value)
+        document.head.appendChild(el)
+      }
+      const prev = el.getAttribute('content')
+      el.setAttribute('content', content)
+      injected.push({ el, isNew, prev })
+    })
+
+    return () => {
+      document.title = prevTitle
+      injected.forEach(({ el, isNew, prev }) => {
+        if (isNew) el.remove()
+        else el.setAttribute('content', prev || '')
+      })
+    }
+  }, [title, description, imageUrl])
+}
+
 /** Normalize Google Drive share URLs to thumbnail image URLs.
  *  Uses the thumbnail endpoint which is not subject to the deprecated uc?export=view block. */
 export function normalizeDriveUrl(url) {
