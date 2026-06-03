@@ -16,33 +16,41 @@
 .nav__bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   height: var(--nav-h);
   padding: 0 20px;
   max-width: 1200px;
   margin: 0 auto;
-  gap: 16px;
 }
 
-/* Logo */
+/* Logo — takes left third so links can be truly centered */
 .nav__logo {
+  flex: 1;
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
+  text-decoration: none;
+  min-width: 0;
+}
+.nav__logo-img {
+  height: 80px;
+  width: auto;
+  display: block;
+  flex-shrink: 0;
+}
+.nav__logo-name {
   font-family: var(--font-head);
   font-weight: 900;
-  font-size: 1.05rem;
-  flex-shrink: 0;
+  font-size: 1rem;
+  color: var(--white);
   white-space: nowrap;
+  letter-spacing: -0.01em;
 }
-.nav__logo-img { height: 34px; width: auto; display: block; }
 
-/* Desktop links */
+/* Desktop links — centered naturally between the two flex:1 sides */
 .nav__links {
   display: none;
-  gap: 6px;
-  flex: 1;
-  justify-content: center;
+  flex: none;
+  gap: 4px;
   list-style: none;
 }
 .nav__links a {
@@ -52,21 +60,26 @@
   padding: 6px 12px;
   border-radius: var(--r-pill);
   transition: color var(--ease), background var(--ease);
+  white-space: nowrap;
 }
 .nav__links a:hover  { color: var(--white); background: rgba(255,255,255,0.05); }
 .nav__links a.active { color: var(--white); background: rgba(255,229,0,0.08); }
 
-/* Right cluster */
+/* Right cluster — takes right third, aligned to the right */
 .nav__right {
+  flex: 1;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 10px;
   flex-shrink: 0;
 }
 
 .nav__cta { display: none; }
 
-/* Lang toggle */
+/* Lang toggle — hidden on mobile (moved into drawer), shown on desktop */
+.nav__right .lang-toggle { display: none; }
+
 .lang-toggle {
   display: flex;
   background: var(--surf2);
@@ -150,8 +163,9 @@
 
 /* ─── Breakpoints ─────────────────────────────────────────────────────────── */
 @media (min-width: 780px) {
-  .nav__links  { display: flex; }
-  .nav__burger { display: none; }
-  .nav__cta    { display: inline-flex; }
-  .nav__drawer { display: none !important; }
+  .nav__links               { display: flex; }
+  .nav__burger              { display: none; }
+  .nav__cta                 { display: inline-flex; }
+  .nav__right .lang-toggle  { display: flex; }
+  .nav__drawer              { display: none !important; }
 }

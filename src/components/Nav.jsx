@@ -44,6 +44,7 @@ export default function Nav() {
     { to: '/subs',     label: t('nav_coffee') },
     { to: '/machines', label: t('nav_machines') },
     { to: '/blog',     label: t('nav_blog') },
+    { to: '/about',    label: t('nav_about') },
     { to: '/contact',  label: t('nav_contact') },
     { to: '/portal',   label: t('nav_portal') },
   ]
@@ -53,7 +54,8 @@ export default function Nav() {
       <div className="nav__bar">
         {/* Logo */}
         <Link to="/" className="nav__logo">
-          <img src={LOGO_URL} alt="Butler Coffee" className="nav__logo-img" />
+          <img src={LOGO_URL} alt="" className="nav__logo-img" />
+          <span className="nav__logo-name">Butler Coffee</span>
         </Link>
 
         {/* Desktop links */}
