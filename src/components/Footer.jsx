@@ -13,6 +13,7 @@ export default function Footer() {
   const productLinks = [
     { to: '/subs',     label: t('nav_coffee') },
     { to: '/machines', label: t('nav_machines') },
+    { to: '/vs-pods',  label: t('nav_vs_pods') },
     { to: '/blog',     label: t('nav_blog') },
     { to: '/portal',   label: t('nav_portal') },
   ]

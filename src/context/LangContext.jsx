@@ -12,6 +12,7 @@ const translations = {
     nav_contact: 'Contact',
     nav_portal: 'Portal',
     nav_cta: 'Find Your Sub',
+    nav_vs_pods: 'Coffee vs Pods',
 
     // Footer
     footer_copy: '© 2025 Butler Coffee SL — Madrid',
@@ -50,6 +51,7 @@ const translations = {
     nav_contact: 'Contacto',
     nav_portal: 'Portal',
     nav_cta: 'Encuentra tu Sub',
+    nav_vs_pods: 'Café vs Cápsulas',
 
     footer_copy: '© 2025 Butler Coffee SL — Madrid',
     footer_all_rights: 'Todos los derechos reservados',

@@ -13,6 +13,7 @@ import About      from './pages/About'
 import Contact    from './pages/Contact'
 import Portal     from './pages/Portal'
 import Legal      from './pages/Legal'
+import VsPods     from './pages/VsPods'
 
 // Scroll to top on route change
 function ScrollReset() {
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/blog"               element={<Blog />} />
         <Route path="/blog/:slug"         element={<BlogPost />} />
         <Route path="/about"              element={<About />} />
+        <Route path="/vs-pods"            element={<VsPods />} />
         <Route path="/contact"            element={<Contact />} />
         <Route path="/portal"             element={<Portal />} />
         <Route path="/legal/:slug"        element={<Legal />} />
