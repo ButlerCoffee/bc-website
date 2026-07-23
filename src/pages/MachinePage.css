@@ -187,11 +187,14 @@
 }
 
 /* Overview (long description) */
+.machine-overview {
+  max-width: 760px;
+  margin: 0 auto;
+}
 .machine-overview__body {
   color: var(--muted);
   font-size: clamp(0.95rem, 1.6vw, 1.05rem);
   line-height: 1.75;
-  max-width: 760px;
 }
 .machine-overview__body.md-rendered p { margin: 0 0 0.9em; }
 .machine-overview__body.md-rendered p:last-child { margin-bottom: 0; }
@@ -222,6 +225,8 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 48px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 @media (min-width: 740px) { .machine-detail__layout { grid-template-columns: 1fr 1fr; } }
 

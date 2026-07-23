@@ -97,11 +97,13 @@ export default function MachinePage() {
       {(machine.detail[lang] || machine.detail.en) && (
         <section className="section">
           <div className="wrap">
-            <h2 className="machine-section-title">{isEs ? 'Descripción' : 'Overview'}</h2>
-            <div
-              className="machine-overview__body md-rendered"
-              dangerouslySetInnerHTML={{ __html: renderMarkdown(machine.detail[lang] || machine.detail.en) }}
-            />
+            <div className="machine-overview">
+              <h2 className="machine-section-title">{isEs ? 'Descripción' : 'Overview'}</h2>
+              <div
+                className="machine-overview__body md-rendered"
+                dangerouslySetInnerHTML={{ __html: renderMarkdown(machine.detail[lang] || machine.detail.en) }}
+              />
+            </div>
           </div>
         </section>
       )}
