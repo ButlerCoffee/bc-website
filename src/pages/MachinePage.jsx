@@ -70,10 +70,6 @@ export default function MachinePage() {
               <div className="machine-hero__brand">{machine.brandName}</div>
               <h1 className="machine-hero__name">{machine.name}</h1>
               <p className="machine-hero__tagline">{machine.tagline[lang] || machine.tagline.en}</p>
-              <div
-                className="machine-hero__desc md-rendered"
-                dangerouslySetInnerHTML={{ __html: renderMarkdown(machine.detail[lang] || machine.detail.en) }}
-              />
 
               {idealText && (
                 <div className="machine-hero__ideal">
@@ -96,6 +92,19 @@ export default function MachinePage() {
           </div>
         </div>
       </section>
+
+      {/* ── OVERVIEW ────────────────────────────────────────────────────── */}
+      {(machine.detail[lang] || machine.detail.en) && (
+        <section className="section">
+          <div className="wrap">
+            <h2 className="machine-section-title">{isEs ? 'Descripción' : 'Overview'}</h2>
+            <div
+              className="machine-overview__body md-rendered"
+              dangerouslySetInnerHTML={{ __html: renderMarkdown(machine.detail[lang] || machine.detail.en) }}
+            />
+          </div>
+        </section>
+      )}
 
       {/* ── SPECS ───────────────────────────────────────────────────────── */}
       <section className="section surf-section">
