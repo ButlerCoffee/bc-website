@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useParams, Navigate } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
 import { useMachines, getMachineBySlug, getMachinesByBrand } from '../data/machinesApi'
+import { renderMarkdown } from '../data/blogApi'
 import Layout from '../components/Layout'
 import './MachinePage.css'
 
@@ -69,7 +70,10 @@ export default function MachinePage() {
               <div className="machine-hero__brand">{machine.brandName}</div>
               <h1 className="machine-hero__name">{machine.name}</h1>
               <p className="machine-hero__tagline">{machine.tagline[lang] || machine.tagline.en}</p>
-              <p className="machine-hero__desc">{machine.detail[lang] || machine.detail.en}</p>
+              <div
+                className="machine-hero__desc md-rendered"
+                dangerouslySetInnerHTML={{ __html: renderMarkdown(machine.detail[lang] || machine.detail.en) }}
+              />
 
               {idealText && (
                 <div className="machine-hero__ideal">

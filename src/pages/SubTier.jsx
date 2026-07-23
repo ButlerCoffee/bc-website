@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useParams, Navigate } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
 import { useTiers, getTierBySlug } from '../data/subsApi'
+import { renderMarkdown } from '../data/blogApi'
 import Layout from '../components/Layout'
 import './SubTier.css'
 
@@ -42,7 +43,10 @@ export default function SubTier() {
               <div className="tier-hero__pills">
                 {tier.pills.map(p => <span key={p} className="tier__pill">{p}</span>)}
               </div>
-              <p className="tier-hero__desc">{tier.detail[lang]}</p>
+              <div
+                className="tier-hero__desc md-rendered"
+                dangerouslySetInnerHTML={{ __html: renderMarkdown(tier.detail[lang] || tier.detail.en) }}
+              />
             </div>
 
             <div className="tier-hero__buy">
