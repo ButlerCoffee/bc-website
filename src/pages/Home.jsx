@@ -5,6 +5,7 @@ import { TIERS } from '../data/tiers'
 import { getFaqs } from '../data/faqApi'
 import { useFeaturedPosts, formatDate, normalizeDriveUrl } from '../data/blogApi'
 import Layout from '../components/Layout'
+import CoffeeCalculator from '../components/CoffeeCalculator'
 import './Home.css'
 
 // ── Markdown → HTML (for FAQ answers from the DB) ─────────────────────────────
@@ -242,6 +243,10 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+
+      {/* ── COFFEE CALCULATOR ─────────────────────────────────────────────── */}
+      <CoffeeCalculator />
 
 
       {/* ── SUBSCRIPTIONS ──────────────────────────────────────────────────── */}

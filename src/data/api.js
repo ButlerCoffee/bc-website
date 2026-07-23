@@ -39,3 +39,15 @@ export async function fetchSheet(sheet) {
 export function invalidateSheet(sheet) {
   delete _cache[sheet]
 }
+
+/** Normalize Google Drive share URLs to thumbnail image URLs.
+ *  Pass a size string (default 'w900') — use smaller values for cards, larger for OG/hero.
+ *  Common sizes: w400, w600, w900, w1200 */
+export function normalizeDriveUrl(url, size = 'w900') {
+  if (!url) return ''
+  const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/)
+  if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=${size}`
+  const m2 = url.match(/id=([a-zA-Z0-9_-]+)/)
+  if (m2) return `https://drive.google.com/thumbnail?id=${m2[1]}&sz=${size}`
+  return url
+}

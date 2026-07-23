@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Link, useParams, Navigate } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
 import { useMachines, getMachineBySlug, getMachinesByBrand } from '../data/machinesApi'
@@ -11,12 +12,19 @@ export default function MachinePage() {
   const isEs = lang === 'es'
 
   const machine = getMachineBySlug(machines, slug)
+  const [activeImg, setActiveImg] = useState(0)
+
+  // Reset the selected gallery image whenever the machine changes.
+  useEffect(() => { setActiveImg(0) }, [machine?.id])
 
   // While loading, show nothing (avoids flash redirect on first render)
   if (loading && !machine) return null
   if (!machine) return <Navigate to="/machines" replace />
 
   const related = getMachinesByBrand(machines, machine.brand).filter(m => m.id !== machine.id)
+  const gallery = machine.images || []
+  const tagText = (machine.tag?.[lang] || machine.tag?.en || '').trim()
+  const idealText = (machine.ideal?.[lang] || machine.ideal?.en || '').trim()
 
   return (
     <Layout>
@@ -26,13 +34,35 @@ export default function MachinePage() {
         <div className="wrap">
           <div className="page-hero__eyebrow">
             <Link to="/machines" className="page-hero__back">{t('back_machines')}</Link>
-            <span className="badge">{machine.tag[lang] || machine.tag.en}</span>
+            {tagText && <span className="badge">{tagText}</span>}
           </div>
 
           <div className="machine-hero__layout">
-            <div className="machine-hero__img">
-              <span style={{ fontSize: '8rem', opacity: 0.12 }}>☕</span>
-              <div className="machine-hero__img-label">{isEs ? 'Imagen próximamente' : 'Image coming soon'}</div>
+            <div className="machine-hero__gallery">
+              <div className="machine-hero__img">
+                {gallery.length > 0
+                  ? <img src={gallery[activeImg] || gallery[0]} alt={machine.name} />
+                  : (
+                    <>
+                      <span style={{ fontSize: '8rem', opacity: 0.12 }}>☕</span>
+                      <div className="machine-hero__img-label">{isEs ? 'Imagen próximamente' : 'Image coming soon'}</div>
+                    </>
+                  )}
+              </div>
+              {gallery.length > 1 && (
+                <div className="machine-hero__thumbs">
+                  {gallery.map((src, i) => (
+                    <button
+                      key={src + i}
+                      type="button"
+                      className={`machine-hero__thumb ${i === activeImg ? 'is-active' : ''}`}
+                      onClick={() => setActiveImg(i)}
+                    >
+                      <img src={src} alt={`${machine.name} ${i + 1}`} />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="machine-hero__info">
@@ -41,10 +71,12 @@ export default function MachinePage() {
               <p className="machine-hero__tagline">{machine.tagline[lang] || machine.tagline.en}</p>
               <p className="machine-hero__desc">{machine.detail[lang] || machine.detail.en}</p>
 
-              <div className="machine-hero__ideal">
-                <span>{isEs ? 'Ideal para:' : 'Ideal for:'}</span>
-                <strong>{machine.ideal[lang] || machine.ideal.en}</strong>
-              </div>
+              {idealText && (
+                <div className="machine-hero__ideal">
+                  <span>{isEs ? 'Ideal para:' : 'Ideal for:'}</span>
+                  <strong>{idealText}</strong>
+                </div>
+              )}
 
               <div className="machine-hero__price">
                 <div>
@@ -126,7 +158,9 @@ export default function MachinePage() {
               {related.map(m => (
                 <Link key={m.id} to={`/machines/${m.slug}`} className="related-card">
                   <div className="related-card__img">
-                    <span style={{ fontSize: '2.5rem', opacity: 0.15 }}>☕</span>
+                    {m.images?.[0]
+                      ? <img src={m.images[0]} alt={m.name} loading="lazy" />
+                      : <span style={{ fontSize: '2.5rem', opacity: 0.15 }}>☕</span>}
                   </div>
                   <div className="related-card__body">
                     <div className="related-card__brand">{m.brandName}</div>

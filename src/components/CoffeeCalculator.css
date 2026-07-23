@@ -1,0 +1,220 @@
+/* ─── Coffee Calculator ──────────────────────────────────────────────────── */
+
+.calc-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 36px;
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 32px 24px;
+}
+
+@media (min-width: 860px) {
+  .calc-card {
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    padding: 48px;
+  }
+}
+
+/* ── Inputs column ───────────────────────────────────────────────────────── */
+.calc-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.calc-field label.calc-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.calc-label .calc-value {
+  font-family: var(--font-head);
+  font-weight: 900;
+  font-size: 1rem;
+  color: var(--yellow);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Range sliders */
+.calc-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: var(--r-pill);
+  outline: none;
+  background: var(--surf3);
+  cursor: pointer;
+}
+
+.calc-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--yellow);
+  border: 3px solid var(--black);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.45);
+  cursor: pointer;
+  transition: transform var(--ease);
+}
+.calc-slider::-webkit-slider-thumb:hover { transform: scale(1.08); }
+
+.calc-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--yellow);
+  border: 3px solid var(--black);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.45);
+  cursor: pointer;
+}
+.calc-slider::-moz-range-track {
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: transparent;
+}
+
+.calc-ticks {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 9px;
+  font-size: 0.72rem;
+  color: var(--subtle);
+  font-weight: 600;
+}
+.calc-ticks span.on { color: var(--yellow); }
+
+/* Dropdown (reuses .form-group styles from index.css but scoped tweaks) */
+.calc-field select.calc-select {
+  background: var(--surf3);
+  border: 1px solid var(--border);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 0.93rem;
+  padding: 12px 16px;
+  border-radius: var(--r-sm);
+  outline: none;
+  width: 100%;
+  transition: border-color var(--ease);
+}
+.calc-field select.calc-select:focus { border-color: rgba(255,229,0,0.4); }
+.calc-field select.calc-select option { background: #1a1a1a; }
+
+.calc-hint {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  color: var(--subtle);
+  line-height: 1.5;
+}
+
+/* ── Results column ──────────────────────────────────────────────────────── */
+.calc-results {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.calc-results__eyebrow {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.calc-results__kg {
+  font-family: var(--font-head);
+  font-weight: 900;
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  letter-spacing: -0.02em;
+  margin-bottom: 22px;
+}
+.calc-results__kg span { color: var(--yellow); }
+
+.calc-tiers {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.calc-tier {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--surf3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 14px 18px;
+  transition: border-color var(--ease);
+}
+.calc-tier--pop {
+  border-color: rgba(255,229,0,0.35);
+  background: var(--yellow-dim);
+}
+
+.calc-tier__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.calc-tier__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.calc-tier__bags {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.calc-tier__pop-tag {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--black);
+  background: var(--yellow);
+  padding: 2px 8px;
+  border-radius: var(--r-pill);
+}
+
+.calc-tier__price {
+  font-family: var(--font-head);
+  font-weight: 900;
+  font-size: 1.15rem;
+  white-space: nowrap;
+}
+.calc-tier__price small {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-left: 3px;
+}
+
+.calc-cta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}

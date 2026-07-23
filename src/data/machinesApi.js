@@ -8,7 +8,7 @@
  * Visual-only fields (image placeholder, page copy) remain hardcoded.
  */
 import { useState, useEffect } from 'react'
-import { fetchSheet } from './api.js'
+import { fetchSheet, normalizeDriveUrl } from './api.js'
 import { MACHINES as FALLBACK_MACHINES, BRANDS as FALLBACK_BRANDS } from './machines.js'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -40,6 +40,20 @@ function adaptMachine(m) {
   const specsES  = parseSpecs(m.specsES)
   const derivedSlug = m.slug || slugify(`${m.brand}-${m.name}`)
 
+  // Collect any populated image1-6 fields, normalize Drive share links → thumbnail URLs.
+  const images = ['image1','image2','image3','image4','image5','image6']
+    .map(k => m[k])
+    .filter(Boolean)
+    .map(url => normalizeDriveUrl(url, 'w900'))
+
+  // Fallback specs from raw sheet fields when the dedicated specsEN/specsES
+  // columns haven't been filled in yet by the admin.
+  const fallbackSpecs = [
+    m.dailyOutput && { label: 'Daily output', value: `${m.dailyOutput} cups/day` },
+    m.juraCoffees && { label: 'Coffee varieties', value: m.juraCoffees },
+    m.areas && { label: 'Best for', value: m.areas },
+  ].filter(Boolean)
+
   return {
     id:          m.id,
     slug:        derivedSlug,
@@ -53,9 +67,13 @@ function adaptMachine(m) {
     description: { en: m.shortDescEN || '', es: m.shortDescES || m.shortDescEN || '' },
     detail:      { en: m.longDescEN  || '', es: m.longDescES  || m.longDescEN  || '' },
     features:    { en: featsEN, es: featsES.length ? featsES : featsEN },
-    specs:       { en: specsEN, es: specsES.length ? specsES : specsEN },
-    ideal:       { en: m.idealEN || '', es: m.idealES || m.idealEN || '' },
+    specs:       {
+      en: specsEN.length ? specsEN : fallbackSpecs,
+      es: specsES.length ? specsES : (specsEN.length ? specsEN : fallbackSpecs),
+    },
+    ideal:       { en: m.idealEN || m.areas || '', es: m.idealES || m.idealEN || m.areas || '' },
     stripeLink:  m.stripeLink || '',
+    images,
     image1:      m.image1 || '', image2: m.image2 || '', image3: m.image3 || '',
     image4:      m.image4 || '', image5: m.image5 || '', image6: m.image6 || '',
     visible:     m.visible,

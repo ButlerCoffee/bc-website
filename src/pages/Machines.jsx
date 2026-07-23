@@ -142,15 +142,22 @@ export default function Machines() {
 }
 
 function MachineCard({ machine: m, lang, isEs, wide }) {
+  const tagText = (m.tag?.[lang] || m.tag?.en || '').trim()
+  const cover = m.images?.[0]
+
   return (
     <Link to={`/machines/${m.slug}`} className={`mcard ${wide ? 'mcard--wide' : ''}`}>
-      <div className="mcard__badge-wrap">
-        <span className={`mcard__tag ${TAG_VARIANTS[m.tagVariant] || ''}`}>
-          {m.tag[lang] || m.tag.en}
-        </span>
-      </div>
+      {tagText && (
+        <div className="mcard__badge-wrap">
+          <span className={`mcard__tag ${TAG_VARIANTS[m.tagVariant] || ''}`}>
+            {tagText}
+          </span>
+        </div>
+      )}
       <div className="mcard__img">
-        <span style={{ fontSize: '3rem', opacity: 0.15 }}>☕</span>
+        {cover
+          ? <img src={cover} alt={m.name} loading="lazy" />
+          : <span style={{ fontSize: '3rem', opacity: 0.15 }}>☕</span>}
       </div>
       <div className="mcard__body">
         <div className="mcard__brand">{m.brandName}</div>

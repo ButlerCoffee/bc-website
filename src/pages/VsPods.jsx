@@ -6,8 +6,8 @@ import './VsPods.css'
 // ── Comparison table data (source: Butler_VS_Pods.pdf) ────────────────────────
 const ROWS = [
   { name: 'Base Coffee',              grams: '~9-10 g', shot: '0,36 – 0,40 €',   kg: '40 €',           highlight: false, pods: false },
-  { name: 'Butler Coffee',            grams: '~9-10 g', shot: '0,44 – 0,49 €',   kg: '49 €',           highlight: true,  pods: false },
-  { name: 'Collection Coffee',        grams: '~9-10 g', shot: '0,62 – 0,69 €',   kg: '69 €',           highlight: false, pods: false },
+  { name: 'Explorer Coffee',          grams: '~9-10 g', shot: '0,45 – 0,50 €',   kg: '50 €',           highlight: true,  pods: false },
+  { name: 'Alpine Coffee',            grams: '~9-10 g', shot: '0,59 – 0,65 €',   kg: '65 €',           highlight: false, pods: false },
   { name: 'Nespresso Original Pods',  grams: '~5 g',    shot: '0,49 – 0,76 €',   kg: '98 – 152 €',     highlight: false, pods: true },
   { name: 'Nespresso Vertuo Pods',    grams: '~7 g',    shot: '0,52 – 0,95 €',   kg: '73 – 134,90 €',  highlight: false, pods: true },
 ]
