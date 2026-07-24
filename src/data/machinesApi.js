@@ -73,6 +73,7 @@ function adaptMachine(m) {
     },
     ideal:       { en: m.idealEN || m.areas || '', es: m.idealES || m.idealEN || m.areas || '' },
     stripeLink:  m.stripeLink || '',
+    sheetLink:   { en: m.sheetEN || '', es: m.sheetES || m.sheetEN || '' },
     images,
     image1:      m.image1 || '', image2: m.image2 || '', image3: m.image3 || '',
     image4:      m.image4 || '', image5: m.image5 || '', image6: m.image6 || '',

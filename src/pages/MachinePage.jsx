@@ -87,6 +87,15 @@ export default function MachinePage() {
                   <Link to="/contact" className="btn btn--yellow">{t('request_quote')}</Link>
                   <Link to="/subs" className="btn btn--ghost">{isEs ? 'Ver suscripciones' : 'See subscriptions'}</Link>
                 </div>
+                {(machine.sheetLink?.[lang] || machine.sheetLink?.en) && (
+                  <a
+                    href={machine.sheetLink[lang] || machine.sheetLink.en}
+                    target="_blank" rel="noreferrer"
+                    className="machine-hero__spec-link"
+                  >
+                    {isEs ? 'Descargar ficha técnica (PDF)' : 'Download spec sheet (PDF)'}
+                  </a>
+                )}
               </div>
             </div>
           </div>

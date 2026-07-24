@@ -177,6 +177,20 @@
 }
 .machine-hero__actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
+.machine-hero__spec-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 0.78rem;
+  color: var(--subtle);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--ease);
+}
+.machine-hero__spec-link::before { content: '↓'; text-decoration: none; }
+.machine-hero__spec-link:hover { color: var(--yellow); }
+
 /* ─── Detail section ─────────────────────────────────────────────────────── */
 .machine-section-title {
   font-family: var(--font-head);
