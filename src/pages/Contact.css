@@ -24,6 +24,14 @@
 }
 
 /* Success */
+.contact-form__error {
+  color: #ff8a80;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.contact-form__error a { color: inherit; text-decoration: underline; }
+.contact-form button[disabled] { opacity: 0.6; cursor: wait; }
+
 .contact-success {
   background: var(--surf);
   border: 1px solid rgba(255,229,0,0.2);

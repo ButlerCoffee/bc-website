@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useLang } from '../context/LangContext'
+import '../pages/Contact.css'
 
 export default function ContactForm() {
   const { lang } = useLang()
@@ -7,12 +8,37 @@ export default function ContactForm() {
 
   const [form, setForm] = useState({ name: '', email: '', company: '', topic: 'subscription', message: '' })
   const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [error, setError] = useState(false)
+  const [botField, setBotField] = useState('')
 
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
-  const handleSubmit = e => {
+  // Submits to Netlify Forms (see the hidden "contact" form in index.html).
+  const handleSubmit = async e => {
     e.preventDefault()
-    // TODO: wire to EmailJS / Formspree / backend
-    setSent(true)
+    setSending(true)
+    setError(false)
+    try {
+      const body = new URLSearchParams({
+        'form-name': 'contact',
+        'bot-field': botField,
+        ...form,
+        language: lang,
+      }).toString()
+      const res = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body,
+      })
+      if (!res.ok) throw new Error(`Form submit failed (${res.status})`)
+      setSent(true)
+      setForm({ name: '', email: '', company: '', topic: 'subscription', message: '' })
+    } catch (err) {
+      console.error(err)
+      setError(true)
+    } finally {
+      setSending(false)
+    }
   }
 
   const topics = isEs ? [
@@ -41,7 +67,11 @@ export default function ContactForm() {
   }
 
   return (
-    <form className="contact-form" onSubmit={handleSubmit}>
+    <form className="contact-form" name="contact" onSubmit={handleSubmit}>
+      {/* Honeypot: hidden from people, bots tend to fill it in */}
+      <p hidden>
+        <label>Leave this empty: <input name="bot-field" value={botField} onChange={e => setBotField(e.target.value)} tabIndex={-1} autoComplete="off" /></label>
+      </p>
       <div className="contact-form__row">
         <div className="form-group">
           <label htmlFor="cf-name">{isEs ? 'Nombre' : 'Name'}</label>
@@ -84,8 +114,17 @@ export default function ContactForm() {
           value={form.message} onChange={handleChange}
         />
       </div>
-      <button type="submit" className="btn btn--yellow btn--full btn--lg">
-        {isEs ? 'Enviar mensaje' : 'Send message'}
+      {error && (
+        <p className="contact-form__error" role="alert">
+          {isEs
+            ? <>No se pudo enviar el mensaje. Inténtalo de nuevo o escríbenos a <a href="mailto:hola@butler.coffee">hola@butler.coffee</a>.</>
+            : <>Your message couldn't be sent. Please try again or email us at <a href="mailto:hola@butler.coffee">hola@butler.coffee</a>.</>}
+        </p>
+      )}
+      <button type="submit" className="btn btn--yellow btn--full btn--lg" disabled={sending}>
+        {sending
+          ? (isEs ? 'Enviando…' : 'Sending…')
+          : (isEs ? 'Enviar mensaje' : 'Send message')}
       </button>
       <p className="contact-form__note">
         {isEs
