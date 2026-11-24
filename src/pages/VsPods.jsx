@@ -1,15 +1,20 @@
 import { Link } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
 import Layout from '../components/Layout'
+import { useTiers } from '../data/subsApi'
+import { fmtEur } from '../data/format'
 import './VsPods.css'
 
 // ── Comparison table data (source: Butler_VS_Pods.pdf) ────────────────────────
-const ROWS = [
-  { name: 'Base Coffee',              grams: '~9-10 g', shot: '0,36 – 0,40 €',   kg: '40 €',           highlight: false, pods: false },
-  { name: 'Explorer Coffee',          grams: '~9-10 g', shot: '0,45 – 0,50 €',   kg: '50 €',           highlight: true,  pods: false },
-  { name: 'Alpine Coffee',            grams: '~9-10 g', shot: '0,59 – 0,65 €',   kg: '65 €',           highlight: false, pods: false },
-  { name: 'Nespresso Original Pods',  grams: '~5 g',    shot: '0,49 – 0,76 €',   kg: '98 – 152 €',     highlight: false, pods: true },
-  { name: 'Nespresso Vertuo Pods',    grams: '~7 g',    shot: '0,52 – 0,95 €',   kg: '73 – 134,90 €',  highlight: false, pods: true },
+// Butler rows are priced from the Sheet's 1kg price; a shot uses ~9–10 g.
+const BUTLER_ROWS = [
+  { id: 'base',     name: 'Base Coffee',     highlight: false },
+  { id: 'explorer', name: 'Explorer Coffee', highlight: true  },
+  { id: 'alpine',   name: 'Alpine Coffee',   highlight: false },
+]
+const POD_ROWS = [
+  { name: 'Nespresso Original Pods', grams: '~5 g', shot: [0.49, 0.76], kg: [98, 152] },
+  { name: 'Nespresso Vertuo Pods',   grams: '~7 g', shot: [0.52, 0.95], kg: [73, 134.9] },
 ]
 
 // ── Benefit categories (written as short article sections) ───────────────────
@@ -70,9 +75,20 @@ const BENEFITS = [
 export default function VsPods() {
   const { lang } = useLang()
   const isEs = lang === 'es'
+  const { tiers } = useTiers()
+
+  const range = ([a, b]) => `${fmtEur(a, lang)} – ${fmtEur(b, lang)}`
+  const round2 = n => Math.round(n * 100) / 100
+  const rows = [
+    ...BUTLER_ROWS.map(r => {
+      const perKg = tiers.find(t => t.id === r.id)?.sizes.find(s => s.label === '1kg')?.price || 0
+      return { ...r, pods: false, grams: '~9–10 g', shot: range([round2(perKg * 0.009), round2(perKg * 0.01)]), kg: fmtEur(perKg, lang) }
+    }),
+    ...POD_ROWS.map(r => ({ ...r, highlight: false, pods: true, shot: range(r.shot), kg: range(r.kg) })),
+  ]
 
   return (
-    <Layout>
+    <Layout title={isEs ? 'Cápsulas vs café de especialidad' : 'Pods vs Specialty Coffee'}>
 
       {/* ── PAGE HERO ─────────────────────────────────────────────────────── */}
       <section className="page-hero vs-hero">
@@ -123,7 +139,7 @@ export default function VsPods() {
                 </tr>
               </thead>
               <tbody>
-                {ROWS.map(r => (
+                {rows.map(r => (
                   <tr
                     key={r.name}
                     className={`${r.highlight ? 'vs-table__highlight' : ''} ${r.pods ? 'vs-table__pods' : ''}`}

@@ -23,6 +23,7 @@
 import { useState, useEffect } from 'react'
 import { fetchSheet } from './api.js'
 import { TIERS as FALLBACK_TIERS } from './tiers.js'
+import SNAPSHOT from './snapshot.json'
 
 // ── Per-tier static metadata (visual / display only) ─────────────────────────
 // Keyed by the tier `title` value as stored in the sheet.
@@ -84,25 +85,33 @@ function adaptTier(s) {
   }
 }
 
+// ── Build ordered tiers from sheet rows ───────────────────────────────────────
+function buildFromRows(rows) {
+  if (!rows || !rows.length) return null
+  // Preserve the display order defined in TIER_META
+  const ordered = Object.values(TIER_META).map(meta =>
+    rows.find(r => findMeta(r.title).id === meta.id)
+  ).filter(Boolean)
+  return ordered.length ? ordered.map(adaptTier) : null
+}
+
+// First paint uses the build-time snapshot of the sheet (scripts/snapshot.mjs).
+const INITIAL = buildFromRows(SNAPSHOT?.subs) || FALLBACK_TIERS
+
 // ── Module-level cache ────────────────────────────────────────────────────────
 let _promise = null
 
 async function loadData() {
   if (_promise) return _promise
-  _promise = fetchSheet('subs').then(rows => {
-    if (!rows || !rows.length) return FALLBACK_TIERS
-    // Preserve the display order defined in TIER_META
-    const ordered = Object.values(TIER_META).map(meta =>
-      rows.find(r => findMeta(r.title).id === meta.id)
-    ).filter(Boolean)
-    return ordered.length ? ordered.map(adaptTier) : FALLBACK_TIERS
-  }).catch(() => FALLBACK_TIERS)
+  _promise = fetchSheet('subs')
+    .then(rows => buildFromRows(rows) || INITIAL)
+    .catch(() => INITIAL)
   return _promise
 }
 
 // ── React hook ────────────────────────────────────────────────────────────────
 export function useTiers() {
-  const [tiers,   setTiers]   = useState(FALLBACK_TIERS)
+  const [tiers,   setTiers]   = useState(INITIAL)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

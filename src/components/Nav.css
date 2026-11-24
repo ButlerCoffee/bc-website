@@ -162,6 +162,15 @@
 }
 
 /* ─── Breakpoints ─────────────────────────────────────────────────────────── */
+@media (max-width: 779px) {
+  .nav__logo-img { height: 56px; }
+}
+/* Small phones: the hero already has this CTA, so drop it from the bar
+   (it otherwise covers the wordmark and pushes the menu button off-screen) */
+@media (max-width: 479px) {
+  .nav__right .nav__cta { display: none; }
+}
+
 @media (min-width: 780px) {
   .nav__links               { display: flex; }
   .nav__burger              { display: none; }

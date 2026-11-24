@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
+import { useTiers } from '../data/subsApi'
+import { fmtEur } from '../data/format'
 import './CoffeeCalculator.css'
 
 // ── Brew method → grams of coffee per cup ──────────────────────────────────
@@ -20,12 +22,17 @@ const INTAKE_LEVELS = [
   { value: 4, cups: 3.5,  en: 'Heavy',       es: 'Fuerte' },
 ]
 
-// ── Price per kg by tier (matches site-wide comparison pricing) ────────────
-const TIER_PRICE_PER_KG = { base: 40, explorer: 50, alpine: 65 }
+// ── Tiers shown in the calculator (price per kg comes from the Sheet's 1kg price) ──
+const CALC_TIERS = ['base', 'explorer', 'alpine']
 
 export default function CoffeeCalculator() {
   const { lang } = useLang()
   const isEs = lang === 'es'
+
+  const { tiers } = useTiers()
+  const pricePerKg = Object.fromEntries(
+    CALC_TIERS.map(id => [id, tiers.find(t => t.id === id)?.sizes.find(s => s.label === '1kg')?.price || 0])
+  )
 
   const [people, setPeople] = useState(12)
   const [intake, setIntake] = useState(3)
@@ -51,13 +58,12 @@ export default function CoffeeCalculator() {
     const kg = roundToHalf(kgRaw)
     const bagCount = roundToBags(kgRaw) // 1 bag = 1kg
     const costs = Object.fromEntries(
-      Object.entries(TIER_PRICE_PER_KG).map(([tier, perKg]) => [tier, bagCount * perKg])
+      CALC_TIERS.map(tier => [tier, bagCount * pricePerKg[tier]])
     )
     return { kgNeeded: kg, bags: bagCount, tierCosts: costs }
-  }, [people, intakeLevel, brewMethod])
+  }, [people, intakeLevel, brewMethod, tiers])
 
   const fmtNum = n => n.toLocaleString(isEs ? 'es-ES' : 'en-US', { maximumFractionDigits: 1 })
-  const fmtEur = n => n.toLocaleString(isEs ? 'es-ES' : 'en-US', { maximumFractionDigits: 0 })
   const bagsLabel = bags === 1
     ? (isEs ? '1 bolsa de 1 kg' : '1 × 1kg bag')
     : (isEs ? `${fmtNum(bags)} bolsas de 1 kg` : `${fmtNum(bags)} × 1kg bags`)
@@ -179,7 +185,7 @@ export default function CoffeeCalculator() {
                     <div className="calc-tier__bags">{bagsLabel}</div>
                   </div>
                   <div className="calc-tier__price">
-                    €{fmtEur(cost)}<small>{isEs ? '/ mes' : '/ mo.'}</small>
+                    {fmtEur(cost, lang)}<small>{isEs ? '/ mes' : '/ mo.'}</small>
                   </div>
                 </div>
               ))}

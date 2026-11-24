@@ -23,7 +23,7 @@ export default function Portal() {
   ]
 
   return (
-    <Layout>
+    <Layout title={isEs ? 'Portal del cliente' : 'Customer Portal'}>
       {/* ── PORTAL HERO ─────────────────────────────────────────────────── */}
       <section className="portal-hero">
         <div className="wrap">

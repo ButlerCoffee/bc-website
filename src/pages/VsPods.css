@@ -1,9 +1,9 @@
 /* ─── Butler vs Pods page ─────────────────────────────────────────────────── */
 
 /* ── Hero: centered eyebrow / title / subtitle + background photo ─────────── */
-.vs-hero {
+.page-hero.vs-hero {
   background-image:
-    linear-gradient(180deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.75) 45%, rgba(0,0,0,0.92) 100%),
+    linear-gradient(180deg, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.5) 45%, rgba(10,10,10,0.95) 100%),
     url('/images/vs-pods-hero.jpg');
   background-size: cover;
   background-position: center 30%;

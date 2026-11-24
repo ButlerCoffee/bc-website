@@ -13,7 +13,7 @@ export default function Legal() {
   if (!page) return <Navigate to="/" replace />
 
   return (
-    <Layout>
+    <Layout title={page ? (page.title[lang] || page.title.en) : undefined}>
       <div className="legal-page">
 
         {/* ── SIDEBAR ───────────────────────────────────────────────────── */}

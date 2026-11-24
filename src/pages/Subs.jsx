@@ -3,6 +3,7 @@ import { useLang } from '../context/LangContext'
 import { useTiers } from '../data/subsApi'
 import Layout from '../components/Layout'
 import './Subs.css'
+import { fmtEur } from '../data/format'
 
 export default function Subs() {
   const { lang, t } = useLang()
@@ -10,7 +11,7 @@ export default function Subs() {
   const { tiers: TIERS } = useTiers()
 
   return (
-    <Layout>
+    <Layout title={isEs ? 'Suscripciones' : 'Subscriptions'}>
       {/* ── PAGE HERO ─────────────────────────────────────────────────────── */}
       <section className="page-hero">
         <div className="wrap">
@@ -116,7 +117,7 @@ export default function Subs() {
                 <div className="sub-card__footer">
                   <div className="sub-card__price">
                     <span>{isEs ? 'desde' : 'from'}</span>
-                    €{tier.price}<small>/{tier.unit}</small>
+                    {fmtEur(tier.price, lang)}<small>/{tier.unit}</small>
                   </div>
                   <span className="sub-card__cta">{isEs ? 'Ver detalles →' : 'View details →'}</span>
                 </div>

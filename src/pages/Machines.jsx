@@ -3,6 +3,7 @@ import { useLang } from '../context/LangContext'
 import { useMachines, getMachinesByBrand } from '../data/machinesApi'
 import Layout from '../components/Layout'
 import './Machines.css'
+import { fmtEur } from '../data/format'
 
 const TAG_VARIANTS = {
   yellow:  'mcard__tag--yellow',
@@ -16,7 +17,7 @@ export default function Machines() {
   const { machines, brands } = useMachines()
 
   return (
-    <Layout>
+    <Layout title={isEs ? 'Máquinas de café' : 'Coffee Machines'}>
 
       {/* ── PAGE HERO ─────────────────────────────────────────────────────── */}
       <section className="page-hero">
@@ -36,10 +37,10 @@ export default function Machines() {
 
           <div className="subs-hero__stats">
             {[
-              { num: '2',     label: isEs ? 'Marcas' : 'Brands' },
-              { num: '4',     label: isEs ? 'Modelos' : 'Models' },
+              { num: String(brands.length),   label: isEs ? 'Marcas' : 'Brands' },
+              { num: String(machines.length), label: isEs ? 'Modelos' : 'Models' },
               { num: '30–100+', label: isEs ? 'Tazas / día' : 'Cups / day' },
-              { num: '1 día', label: isEs ? 'Instalación' : 'Setup' },
+              { num: isEs ? '1 día' : '1 day', label: isEs ? 'Instalación' : 'Setup' },
             ].map(s => (
               <div className="stat" key={s.label}>
                 <span className="stat__num">{s.num}</span>
@@ -176,7 +177,7 @@ function MachineCard({ machine: m, lang, isEs, wide }) {
       <div className="mcard__footer">
         <div className="mcard__price">
           <span className="mcard__price-from">{isEs ? 'Desde' : 'From'}</span>
-          <span className="mcard__price-num">€{m.price.toLocaleString()}</span>
+          <span className="mcard__price-num">{fmtEur(m.price, lang)}</span>
         </div>
         <span className="btn btn--ghost btn--sm">{isEs ? 'Ver detalles →' : 'View details →'}</span>
       </div>

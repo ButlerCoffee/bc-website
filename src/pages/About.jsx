@@ -12,7 +12,7 @@ export default function About() {
   const isEs = lang === 'es'
 
   return (
-    <Layout>
+    <Layout title={isEs ? 'Sobre nosotros' : 'About'}>
 
       {/* ── PAGE HERO ─────────────────────────────────────────────────────── */}
       <section className="page-hero">

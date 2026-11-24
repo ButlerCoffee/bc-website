@@ -4,7 +4,7 @@ import { LEGAL_NAV } from '../data/legal'
 import './Footer.css'
 
 const LOGO_URL   = '/BC_outlineLogo.svg'
-const PRINTS_URL = 'https://drive.google.com/uc?export=view&id=1_OTQRSEL67QT3zkSQgXThEkRnYsfJXl0'
+const PRINTS_URL = '/images/footprints.png'
 
 export default function Footer() {
   const { lang, t } = useLang()

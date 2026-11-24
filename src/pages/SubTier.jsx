@@ -5,6 +5,7 @@ import { useTiers, getTierBySlug } from '../data/subsApi'
 import { renderMarkdown } from '../data/blogApi'
 import Layout from '../components/Layout'
 import './SubTier.css'
+import { fmtEur } from '../data/format'
 
 export default function SubTier() {
   const { tier: slug } = useParams()
@@ -26,7 +27,7 @@ export default function SubTier() {
   const nextTier    = tierIndex < tiers.length - 1 ? tiers[tierIndex + 1] : null
 
   return (
-    <Layout>
+    <Layout title={tier?.name}>
 
       {/* ── HERO ────────────────────────────────────────────────────────── */}
       <section className={`tier-hero ${tier.featured ? 'tier-hero--feat' : ''}`}>
@@ -87,7 +88,7 @@ export default function SubTier() {
                       onClick={() => setSize(s.label)}
                     >
                       <span className="sz-label">{s.label}</span>
-                      <span className="sz-price">€{s.price}</span>
+                      <span className="sz-price">{fmtEur(s.price, lang)}</span>
                     </button>
                   ))}
                 </div>
@@ -95,7 +96,7 @@ export default function SubTier() {
                 {/* Price */}
                 <div className="tier-buy-card__price">
                   <span className="tier-buy-card__price-from">{isEs ? 'desde' : 'from'}</span>
-                  <span className="tier-buy-card__price-num">€{currentSize.price}</span>
+                  <span className="tier-buy-card__price-num">{fmtEur(currentSize.price, lang)}</span>
                   <span className="tier-buy-card__price-per">{isEs ? '/ mes' : '/ mo.'}</span>
                 </div>
                 <p className="tier-buy-card__note">
@@ -164,7 +165,7 @@ export default function SubTier() {
                 <div>
                   <div className="tier-nav-card__name">{other.name}</div>
                   <div className="tier-nav-card__price">
-                    {isEs ? 'desde' : 'from'} €{other.price}/{other.unit}
+                    {isEs ? 'desde' : 'from'} {fmtEur(other.price, lang)}/{other.unit}
                   </div>
                 </div>
                 <span className="tier-nav-card__arrow">→</span>

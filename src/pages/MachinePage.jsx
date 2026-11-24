@@ -5,6 +5,7 @@ import { useMachines, getMachineBySlug, getMachinesByBrand } from '../data/machi
 import { renderMarkdown } from '../data/blogApi'
 import Layout from '../components/Layout'
 import './MachinePage.css'
+import { fmtEur } from '../data/format'
 
 export default function MachinePage() {
   const { machine: slug } = useParams()
@@ -28,7 +29,7 @@ export default function MachinePage() {
   const idealText = (machine.ideal?.[lang] || machine.ideal?.en || '').trim()
 
   return (
-    <Layout>
+    <Layout title={machine ? `${machine.brandName} ${machine.name}` : undefined}>
 
       {/* ── HERO ────────────────────────────────────────────────────────── */}
       <section className="machine-hero">
@@ -81,7 +82,7 @@ export default function MachinePage() {
               <div className="machine-hero__price">
                 <div>
                   <span className="machine-hero__price-from">{isEs ? 'Desde' : 'From'}</span>
-                  <span className="machine-hero__price-num">€{machine.price.toLocaleString()}</span>
+                  <span className="machine-hero__price-num">{fmtEur(machine.price, lang)}</span>
                 </div>
                 <div className="machine-hero__actions">
                   <Link to="/contact" className="btn btn--yellow">{t('request_quote')}</Link>
@@ -191,7 +192,7 @@ export default function MachinePage() {
                     <h3 className="related-card__name">{m.name}</h3>
                     <p className="related-card__desc">{m.tagline[lang] || m.tagline.en}</p>
                     <div className="related-card__footer">
-                      <span className="related-card__price">€{m.price.toLocaleString()}</span>
+                      <span className="related-card__price">{fmtEur(m.price, lang)}</span>
                       <span className="related-card__link">{isEs ? 'Ver →' : 'View →'}</span>
                     </div>
                   </div>

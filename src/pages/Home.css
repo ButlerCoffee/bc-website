@@ -1,8 +1,7 @@
 /* ─── HERO ───────────────────────────────────────────────────────────────── */
-.hero-section { background: var(--black); }
+.hero-section { background: var(--black); overflow-x: clip; }
 
 .hero {
-  min-height: 100svh;
   display: grid;
   grid-template-columns: 1fr;
   align-items: center;
@@ -13,6 +12,7 @@
 }
 @media (min-width: 860px) {
   .hero {
+    min-height: 100svh;
     grid-template-columns: 1fr 1fr;
     padding-top: calc(var(--nav-h) + 60px);
   }

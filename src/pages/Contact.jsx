@@ -9,7 +9,7 @@ export default function Contact() {
   const isEs = lang === 'es'
 
   return (
-    <Layout>
+    <Layout title={isEs ? 'Contacto' : 'Contact'}>
 
       {/* ── PAGE HERO ─────────────────────────────────────────────────────── */}
       <section className="page-hero">

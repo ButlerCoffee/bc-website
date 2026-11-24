@@ -10,6 +10,7 @@
 import { useState, useEffect } from 'react'
 import { fetchSheet, normalizeDriveUrl } from './api.js'
 import { MACHINES as FALLBACK_MACHINES, BRANDS as FALLBACK_BRANDS } from './machines.js'
+import SNAPSHOT from './snapshot.json'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -84,41 +85,45 @@ function adaptMachine(m) {
   }
 }
 
+// ── Build machines + brands from sheet rows ──────────────────────────────────
+function buildFromRows(rows) {
+  if (!rows || !rows.length) return null
+  const machines = rows.filter(m => m.visible).map(adaptMachine)
+  if (!machines.length) return null
+
+  // Build brand objects from unique brand IDs, merging with hardcoded brand copy
+  const seen = new Set()
+  const brands = []
+  for (const m of machines) {
+    if (seen.has(m.brand)) continue
+    seen.add(m.brand)
+    const fb = FALLBACK_BRANDS.find(b => b.id === m.brand)
+    brands.push(fb || {
+      id: m.brand, name: m.brandName,
+      tagline: {}, description: {}, badge: {}, logo: '☕',
+    })
+  }
+  return { machines, brands }
+}
+
+// First paint uses the build-time snapshot of the sheet (scripts/snapshot.mjs),
+// falling back to the hardcoded list only if no snapshot exists.
+const INITIAL = buildFromRows(SNAPSHOT?.machines) || { machines: FALLBACK_MACHINES, brands: FALLBACK_BRANDS }
+
 // ── Module-level cache: promise resolved once per session ─────────────────────
 let _promise = null
 
 async function loadData() {
   if (_promise) return _promise
-  _promise = fetchSheet('machines').then(rows => {
-    if (!rows || !rows.length) return { machines: FALLBACK_MACHINES, brands: FALLBACK_BRANDS }
-
-    const machines = rows.filter(m => m.visible).map(adaptMachine)
-
-    // Build brand objects from unique brand IDs, merging with hardcoded fallback data
-    const seen = new Set()
-    const brands = []
-    for (const m of machines) {
-      if (seen.has(m.brand)) continue
-      seen.add(m.brand)
-      const fb = FALLBACK_BRANDS.find(b => b.id === m.brand)
-      brands.push(fb || {
-        id: m.brand, name: m.brandName,
-        tagline: {}, description: {}, badge: {}, logo: '☕',
-      })
-    }
-
-    return { machines, brands }
-  }).catch(() => ({ machines: FALLBACK_MACHINES, brands: FALLBACK_BRANDS }))
+  _promise = fetchSheet('machines')
+    .then(rows => buildFromRows(rows) || INITIAL)
+    .catch(() => INITIAL)
   return _promise
 }
 
 // ── React hook ────────────────────────────────────────────────────────────────
 export function useMachines() {
-  const [state, setState] = useState({
-    machines: FALLBACK_MACHINES,
-    brands:   FALLBACK_BRANDS,
-    loading:  true,
-  })
+  const [state, setState] = useState({ ...INITIAL, loading: true })
 
   useEffect(() => {
     let cancelled = false

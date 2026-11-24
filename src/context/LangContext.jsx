@@ -7,7 +7,7 @@ const translations = {
     brand: 'Butler Coffee',
     nav_coffee: 'Coffee',
     nav_machines: 'Machines',
-    nav_blog: 'Artículos',
+    nav_blog: 'Blog',
     nav_about: 'About',
     nav_contact: 'Contact',
     nav_portal: 'Portal',

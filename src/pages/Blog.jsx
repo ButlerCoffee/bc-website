@@ -23,7 +23,7 @@ export default function Blog() {
   const rest  = filtered.filter(p => !hero || p.id !== hero.id)
 
   return (
-    <Layout>
+    <Layout title={isEs ? 'Artículos' : 'Blog'}>
 
       {/* ── PAGE HERO ─────────────────────────────────────────────────────── */}
       <section className="page-hero">

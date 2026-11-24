@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
-import { TIERS } from '../data/tiers'
+import { useTiers } from '../data/subsApi'
+import { useMachines } from '../data/machinesApi'
+import { fmtEur } from '../data/format'
 import { getFaqs } from '../data/faqApi'
 import { useFeaturedPosts, formatDate, normalizeDriveUrl } from '../data/blogApi'
 import Layout from '../components/Layout'
@@ -28,9 +30,8 @@ function renderMarkdown(md) {
   }).join('');
 }
 
-const LOGO_URL    = 'https://drive.google.com/uc?export=view&id=1BrvJTmLjnaUQ6feC6NkSvET6SouIkCQK'
-const HERO_IMG    = 'https://drive.google.com/uc?export=view&id=1M7WwiFMF97bWnnUCfQ_pm1tIlHIOBg4U'
-const PRINTS_URL  = 'https://drive.google.com/uc?export=view&id=1_OTQRSEL67QT3zkSQgXThEkRnYsfJXl0'
+const HERO_IMG    = '/images/hero-bag.jpg'
+const PRINTS_URL  = '/images/footprints.png'
 
 function TierCard({ tier, lang }) {
   const [size, setSize] = useState(tier.sizes[0].label)
@@ -57,7 +58,7 @@ function TierCard({ tier, lang }) {
 
       <div className="tier__price">
         <span className="tier__from">{lang === 'es' ? 'desde' : 'from'}</span>
-        <span className="tier__amt">€{currentSize.price}</span>
+        <span className="tier__amt">{fmtEur(currentSize.price, lang)}</span>
         <span className="tier__per">{lang === 'es' ? '/ mes' : '/ mo.'}</span>
       </div>
       <p className="tier__note">{lang === 'es' ? `por bolsa de ${size}` : `per ${size} bag`}</p>
@@ -130,6 +131,12 @@ function FaqItem({ q, a }) {
 export default function Home() {
   const { lang } = useLang()
   const isEs = lang === 'es'
+  const { tiers } = useTiers()
+  const { machines } = useMachines()
+  const fromPrice = brand => {
+    const prices = machines.filter(m => m.brand === brand && m.price > 0).map(m => m.price)
+    return prices.length ? fmtEur(Math.min(...prices), lang) : ''
+  }
 
   // Blog teaser — latest featured posts from API
   const { posts: featuredPosts } = useFeaturedPosts(3)
@@ -155,7 +162,7 @@ export default function Home() {
   })()
 
   return (
-    <Layout>
+    <Layout title="">
 
       {/* ── HERO ───────────────────────────────────────────────────────────── */}
       <section className="hero-section" id="home">
@@ -266,7 +273,7 @@ export default function Home() {
         <div className="subs__scroll-wrap">
           <div className="subs__scroll">
             <div className="subs__track">
-              {TIERS.map(tier => (
+              {tiers.map(tier => (
                 <TierCard key={tier.id} tier={tier} lang={lang} />
               ))}
             </div>
@@ -298,7 +305,7 @@ export default function Home() {
                 desc: isEs
                   ? 'Máquinas automáticas de espresso de ingeniería suiza para uso intensivo en la oficina. De 30 a más de 100 cafés al día.'
                   : 'Swiss-engineered automatic espresso machines built for serious office use. From 30 to 100+ cups per day.',
-                price: '€1,299',
+                price: fromPrice('jura'),
                 icon: '🇨🇭',
                 slug: '/machines',
               },
@@ -308,7 +315,7 @@ export default function Home() {
                 desc: isEs
                   ? 'Preparación por lotes de precisión para equipos que se toman en serio su café de filtro. Control de temperatura hasta 0,1°.'
                   : 'Precision batch brewing for teams that take their filter coffee seriously. Temperature control to 0.1°.',
-                price: '€199',
+                price: fromPrice('behmor'),
                 icon: '☕',
                 slug: '/machines',
               },
