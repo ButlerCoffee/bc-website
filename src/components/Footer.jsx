@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useSettings } from '../data/settingsApi'
 import { useLang } from '../context/LangContext'
-import { LEGAL_NAV } from '../data/legal'
+import { useLegalPages } from '../data/legalApi'
 import './Footer.css'
 
 const LOGO_URL   = '/BC_outlineLogo.svg'
@@ -20,6 +20,7 @@ export default function Footer() {
   ]
 
   const settings = useSettings()
+  const { pages: legalPages } = useLegalPages()
   const companyLinks = [
     { to: '/contact', label: t('nav_contact') },
     { href: '/#faq',  label: 'FAQ' },
@@ -69,7 +70,7 @@ export default function Footer() {
 
           {/* Legal links */}
           <nav className="footer__legal" aria-label="Legal">
-            {LEGAL_NAV.map(({ slug, title }) => (
+            {legalPages.map(({ slug, title }) => (
               <Link key={slug} to={`/legal/${slug}`}>
                 {title[lang] || title.en}
               </Link>

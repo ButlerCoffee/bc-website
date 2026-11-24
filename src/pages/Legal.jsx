@@ -1,6 +1,6 @@
 import { Link, useParams, Navigate } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
-import { getLegalBySlug, LEGAL_NAV } from '../data/legal'
+import { useLegalPages } from '../data/legalApi'
 import Layout from '../components/Layout'
 import { useSettings, fillSettings } from '../data/settingsApi'
 import './Legal.css'
@@ -8,12 +8,13 @@ import './Legal.css'
 export default function Legal() {
   const { slug } = useParams()
   const { lang } = useLang()
-  const page = getLegalBySlug(slug)
+  const { pages, loading } = useLegalPages()
+  const page = pages.find(p => p.slug === slug)
   const isEs = lang === 'es'
   const settings = useSettings()
   const fill = t => fillSettings(t, settings)
 
-  if (!page) return <Navigate to="/" replace />
+  if (!page) return loading ? null : <Navigate to="/" replace />
 
   return (
     <Layout title={page ? (page.title[lang] || page.title.en) : undefined}>
@@ -27,7 +28,7 @@ export default function Legal() {
             </Link>
             <h4 className="legal-sidebar__title">{isEs ? 'Legal' : 'Legal'}</h4>
             <nav>
-              {LEGAL_NAV.map(item => (
+              {pages.map(item => (
                 <Link
                   key={item.slug}
                   to={`/legal/${item.slug}`}
@@ -75,7 +76,7 @@ export default function Legal() {
               {isEs ? 'Más documentos legales:' : 'More legal documents:'}
             </p>
             <div className="legal-nav-bar__links">
-              {LEGAL_NAV.filter(item => item.slug !== slug).map(item => (
+              {pages.filter(item => item.slug !== slug).map(item => (
                 <Link key={item.slug} to={`/legal/${item.slug}`} className="legal-nav-bar__link">
                   {item.title[lang] || item.title.en} →
                 </Link>

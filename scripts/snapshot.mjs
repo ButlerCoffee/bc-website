@@ -42,6 +42,14 @@ async function fetchSheet(url, sheet) {
   return clean(json.data)
 }
 
+async function fetchLegal(url) {
+  try {
+    const res = await fetch(`${url}?sheet=legal`, { redirect: 'follow' })
+    const json = await res.json()
+    return json.ok && Array.isArray(json.data) ? json.data : []
+  } catch { return [] }
+}
+
 async function fetchSettings(url) {
   try {
     const res = await fetch(`${url}?sheet=settings`, { redirect: 'follow' })
@@ -57,12 +65,13 @@ if (!url) {
 }
 
 try {
-  const [machines, subs, settings] = await Promise.all([
+  const [machines, subs, settings, legal] = await Promise.all([
     fetchSheet(url, 'machines'),
     fetchSheet(url, 'subs'),
     fetchSettings(url),
+    fetchLegal(url),
   ])
-  writeFileSync(OUT, JSON.stringify({ fetchedAt: new Date().toISOString(), machines, subs, settings }, null, 1) + '\n')
+  writeFileSync(OUT, JSON.stringify({ fetchedAt: new Date().toISOString(), machines, subs, settings, legal }, null, 1) + '\n')
   console.log(`[snapshot] Saved ${machines.length} machines, ${subs.length} subs.`)
 } catch (err) {
   console.warn(`[snapshot] Fetch failed (${err.message}) — keeping existing snapshot.`)
