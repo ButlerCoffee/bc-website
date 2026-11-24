@@ -67,19 +67,6 @@ export default function Contact() {
                   </div>
                 </div>
               </div>
-
-              <div className="contact-info-card">
-                <h3>{isEs ? '¿Prefieres explorar?' : 'Rather explore first?'}</h3>
-                <p>{isEs ? 'Echa un vistazo a nuestros niveles y máquinas antes de contactar.' : 'Check out our tiers and machines before getting in touch.'}</p>
-                <div className="contact-sidebar-links">
-                  <Link to="/subs" className="btn btn--ghost btn--sm btn--full">
-                    {isEs ? 'Ver suscripciones →' : 'View subscriptions →'}
-                  </Link>
-                  <Link to="/machines" className="btn btn--ghost btn--sm btn--full">
-                    {isEs ? 'Ver máquinas →' : 'View machines →'}
-                  </Link>
-                </div>
-              </div>
             </div>
 
           </div>

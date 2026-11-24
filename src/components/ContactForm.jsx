@@ -6,7 +6,7 @@ export default function ContactForm() {
   const { lang } = useLang()
   const isEs = lang === 'es'
 
-  const [form, setForm] = useState({ name: '', email: '', company: '', topic: 'subscription', message: '' })
+  const [form, setForm] = useState({ name: '', email: '', company: '', message: '' })
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState(false)
@@ -32,7 +32,7 @@ export default function ContactForm() {
       })
       if (!res.ok) throw new Error(`Form submit failed (${res.status})`)
       setSent(true)
-      setForm({ name: '', email: '', company: '', topic: 'subscription', message: '' })
+      setForm({ name: '', email: '', company: '', message: '' })
     } catch (err) {
       console.error(err)
       setError(true)
@@ -41,17 +41,6 @@ export default function ContactForm() {
     }
   }
 
-  const topics = isEs ? [
-    { value: 'subscription', label: 'Suscripción de café' },
-    { value: 'machine',      label: 'Máquinas de café' },
-    { value: 'bundle',       label: 'Pack máquina + suscripción' },
-    { value: 'other',        label: 'Otro' },
-  ] : [
-    { value: 'subscription', label: 'Coffee subscription' },
-    { value: 'machine',      label: 'Coffee machines' },
-    { value: 'bundle',       label: 'Machine + subscription bundle' },
-    { value: 'other',        label: 'Something else' },
-  ]
 
   if (sent) {
     return (
@@ -97,12 +86,6 @@ export default function ContactForm() {
           placeholder={isEs ? 'Tu empresa' : 'Your company'}
           value={form.company} onChange={handleChange}
         />
-      </div>
-      <div className="form-group">
-        <label htmlFor="cf-topic">{isEs ? '¿Sobre qué?' : "What's this about?"}</label>
-        <select id="cf-topic" name="topic" value={form.topic} onChange={handleChange}>
-          {topics.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-        </select>
       </div>
       <div className="form-group">
         <label htmlFor="cf-message">{isEs ? 'Mensaje' : 'Message'}</label>

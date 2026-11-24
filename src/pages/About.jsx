@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
 import Layout from '../components/Layout'
-import ContactForm from '../components/ContactForm'
+import ContactSection from '../components/ContactSection'
 import './About.css'
 
 // Replace this with a real image URL when available
@@ -78,24 +78,7 @@ export default function About() {
       </section>
 
       {/* ── CONTACT FORM ─────────────────────────────────────────────────── */}
-      <section className="section about-contact">
-        <div className="wrap about-contact__inner">
-          <div className="sh">
-            <span className="badge">{isEs ? 'Escríbenos' : 'Get in touch'}</span>
-            <h2 className="section-title">
-              {isEs ? <>¿Hablamos del <em>café?</em></> : <>Let's talk <em>coffee.</em></>}
-            </h2>
-            <p className="section-sub">
-              {isEs
-                ? 'Cuéntanos sobre tu equipo y te ayudamos a encontrar el nivel perfecto.'
-                : 'Tell us about your team and we\'ll help you find the right fit.'}
-            </p>
-          </div>
-          <div className="about-contact__form">
-            <ContactForm />
-          </div>
-        </div>
-      </section>
+      <ContactSection />
 
     </Layout>
   )

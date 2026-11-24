@@ -1,0 +1,16 @@
+/* ── Contact section (Home + About) ─────────────────────────────────────────── */
+.contact-section {
+  background: var(--surf);
+  border-top: 1px solid var(--border);
+}
+
+.wrap.contact-section__inner {
+  max-width: 720px;
+}
+
+.contact-section .section-sub {
+  color: var(--muted);
+  margin-top: 12px;
+  margin-bottom: 40px;
+  font-size: 1rem;
+}
