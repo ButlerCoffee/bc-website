@@ -34,6 +34,15 @@ const TIER_META = {
   'Summit Coffee':  { id: 'summit',  slug: 'summit',  emoji: '🏔️', color: '#ffd700', image: '/ducksubs/duck_summit_bw.webp', thumb: '/ducksubs/duck_summit_bw-sm.webp',   pills: ['Private Stock', 'Unique'],    featured: false },
 }
 
+// ── One-off ("Buy once") Stripe payment links, per tier and size ─────────────
+// One bag per checkout; €5 shipping under €30, free from €30 (see Stripe).
+export const ONE_OFF_LINKS = {
+  base:     { '250g': 'https://buy.stripe.com/7sY28q1PncLC6YldijaZi0v', '500g': 'https://buy.stripe.com/6oU6oG0LjbHyciF0vxaZi0w', '1kg': 'https://buy.stripe.com/00w9AS2Tr4f6aaxemnaZi0x' },
+  explorer: { '250g': 'https://buy.stripe.com/aFa14m9hP6neciF2DFaZi0y', '500g': 'https://buy.stripe.com/aFa14mcu15jadmJ7XZaZi0z', '1kg': 'https://buy.stripe.com/8x200i1Pn9zqeqN1zBaZi0A' },
+  alpine:   { '250g': 'https://buy.stripe.com/8x2aEW51zaDu0zX5PRaZi0B', '500g': 'https://buy.stripe.com/28E6oG65DfXO1E1923aZi0C', '1kg': 'https://buy.stripe.com/bJe3cu8dL4f6dmJ2DFaZi0D' },
+  summit:   { '200g': 'https://buy.stripe.com/bJecN41Pn8vmdmJ3HJaZi0E' },
+}
+
 // Fallback: match by partial title if exact match fails
 function findMeta(title) {
   if (TIER_META[title]) return TIER_META[title]
@@ -82,6 +91,7 @@ function adaptTier(s) {
     unit:        sizes[0]?.label || '250g',
     sizes,
     stripeLinks,
+    oneOffLinks: ONE_OFF_LINKS[meta.id] || {},
   }
 }
 
@@ -96,7 +106,8 @@ function buildFromRows(rows) {
 }
 
 // First paint uses the build-time snapshot of the sheet (scripts/snapshot.mjs).
-const INITIAL = buildFromRows(SNAPSHOT?.subs) || FALLBACK_TIERS
+const INITIAL = buildFromRows(SNAPSHOT?.subs) ||
+  FALLBACK_TIERS.map(t => ({ ...t, oneOffLinks: ONE_OFF_LINKS[t.id] || {} }))
 
 // ── Module-level cache ────────────────────────────────────────────────────────
 let _promise = null

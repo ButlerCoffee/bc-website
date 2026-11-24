@@ -313,6 +313,23 @@
 .tier--feat .tier__cta { background: var(--yellow); border-color: var(--yellow); color: var(--black); }
 .tier--feat .tier__cta:hover { background: #f5da00; box-shadow: 0 4px 18px rgba(255,229,0,0.2); }
 
+.tier__once {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  border-radius: var(--r-md);
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px dashed rgba(255,255,255,0.18);
+  transition: color var(--ease), border-color var(--ease);
+}
+.tier__once:hover { color: var(--white); border-color: rgba(255,255,255,0.35); }
+
 .tier__detail-link {
   text-align: center;
   font-size: 0.72rem;

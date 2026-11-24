@@ -22,6 +22,7 @@ export default function SubTier() {
 
   const currentSize = tier.sizes.find(s => s.label === size) || tier.sizes[0]
   const stripeLink  = tier.stripeLinks?.[size] || '#'
+  const onceLink    = tier.oneOffLinks?.[size]
   const tierIndex   = tiers.findIndex(t => t.id === tier.id)
   const prevTier    = tierIndex > 0 ? tiers[tierIndex - 1] : null
   const nextTier    = tierIndex < tiers.length - 1 ? tiers[tierIndex + 1] : null
@@ -110,6 +111,18 @@ export default function SubTier() {
                 <p className="tier-buy-card__legal">
                   {isEs ? 'Sin compromiso. Cancela cuando quieras.' : 'No commitment. Cancel any time.'}
                 </p>
+                {onceLink && (
+                  <a href={onceLink} className="btn btn--full btn--ghost tier-buy-card__once">
+                    {t('buy_once')}
+                  </a>
+                )}
+                {onceLink && (
+                  <p className="tier-buy-card__legal">
+                    {isEs
+                      ? 'Una bolsa, sin suscripción. Envío 5€, gratis desde 30€.'
+                      : 'One bag, no subscription. Shipping €5, free from €30.'}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -133,7 +146,7 @@ export default function SubTier() {
               </div>
             ))}
             {[
-              { en: 'Free shipping over €30', es: 'Envío gratis a partir de 30€' },
+              { en: 'Free shipping from €30', es: 'Envío gratis a partir de 30€' },
               { en: 'Cancel any time via Portal', es: 'Cancela cuando quieras desde el Portal' },
               { en: 'Freshness guaranteed', es: 'Frescura garantizada' },
               { en: 'Whole bean or ground', es: 'Grano entero o molido' },

@@ -38,6 +38,7 @@ function TierCard({ tier, lang }) {
   const [size, setSize] = useState(tier.sizes[0].label)
   const currentSize = tier.sizes.find(s => s.label === size) || tier.sizes[0]
   const stripeLink = tier.stripeLinks[size] || '#'
+  const onceLink   = tier.oneOffLinks?.[size]
 
   return (
     <div className={`tier ${tier.featured ? 'tier--feat' : ''}`}>
@@ -85,8 +86,13 @@ function TierCard({ tier, lang }) {
 
       <div className="tier__actions">
         <a href={stripeLink} className="tier__cta">
-          {lang === 'es' ? 'Empieza tu Sub' : 'Start Your Sub'}
+          {lang === 'es' ? 'Suscribirme' : 'Subscribe'}
         </a>
+        {onceLink && (
+          <a href={onceLink} className="tier__once">
+            {lang === 'es' ? 'Comprar una vez' : 'Buy once'}
+          </a>
+        )}
         <Link to={`/subs/${tier.slug}`} className="tier__detail-link">
           {lang === 'es' ? 'Ver detalles' : 'Learn more'}
         </Link>
@@ -101,7 +107,7 @@ const FALLBACK_FAQS_ES = [
   { q: '¿Qué café recibiré cada mes?', a: 'Cada mes recibirás un café diferente — nunca el mismo dos meses seguidos. Cada selección se cuida según tu nivel y perfil de sabor.' },
   { q: '¿Puedo recibir el mismo café cada mes?', a: '¡Haremos todo lo posible! Mientras haya stock, lo gestionamos. Escríbenos un email y lo resolvemos.' },
   { q: '¿A dónde enviáis?', a: 'Enviamos desde Madrid a toda la España peninsular, Portugal y Andorra.' },
-  { q: '¿Cuánto cuesta el envío?', a: 'El envío es gratuito en pedidos superiores a 30€. En caso contrario, se aplica un pequeño coste de 3,50€.' },
+  { q: '¿Cuánto cuesta el envío?', a: 'El envío es gratuito en pedidos de 30€ o más. En caso contrario, se aplica un pequeño coste de 5€.' },
   { q: '¿Cómo puedo cambiar o cancelar mi suscripción?', a: 'Puedes cambiar o cancelar tu suscripción en cualquier momento desde el <a href="/portal" style="color:var(--yellow)">Portal</a>. Sin llamadas, sin complicaciones.' },
   { q: '¿Ofrecéis compras puntuales?', a: '¡Sí! Echa un vistazo al <strong>Passport: Ranger 3-Pack</strong> — un trío de cafés seleccionados para explorar la gama Butler antes de suscribirte.' },
 ]
@@ -111,7 +117,7 @@ const FALLBACK_FAQS_EN = [
   { q: 'What coffee will I get each month?', a: 'Every month you\'ll receive a different coffee — never the same one two months in a row. We curate each selection based on your tier and taste profile.' },
   { q: 'Can I get the same coffee each month?', a: 'We\'ll do our best! As long as there is supply, we can make it happen. Just drop us an email and we\'ll sort it out.' },
   { q: 'Where do you ship to?', a: 'We ship from our base in Madrid to mainland Spain, Portugal and Andorra.' },
-  { q: 'How much is shipping?', a: 'Shipping is free on all orders over €30. Otherwise, a flat fee of €3.50 applies.' },
+  { q: 'How much is shipping?', a: 'Shipping is free on all orders of €30 or more. Otherwise, a flat fee of €5 applies.' },
   { q: 'How can I change or cancel my subscription?', a: 'You can change or cancel your subscription anytime through your <a href="/portal" style="color:var(--yellow)">Portal</a>. No calls, no hassle.' },
   { q: 'Do you offer one-time purchases?', a: 'Yes! Check out our <strong>Passport: Ranger 3-Pack</strong> — a curated trio of coffees to explore the Butler range before committing to a subscription.' },
 ]
