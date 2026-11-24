@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useLang } from '../context/LangContext'
 import '../pages/Contact.css'
+import { useSettings } from '../data/settingsApi'
 
 export default function ContactForm() {
   const { lang } = useLang()
   const isEs = lang === 'es'
+  const { contactEmail } = useSettings()
 
   const [form, setForm] = useState({ name: '', email: '', company: '', message: '' })
   const [sent, setSent] = useState(false)
@@ -100,8 +102,8 @@ export default function ContactForm() {
       {error && (
         <p className="contact-form__error" role="alert">
           {isEs
-            ? <>No se pudo enviar el mensaje. Inténtalo de nuevo o escríbenos a <a href="mailto:hola@butler.coffee">hola@butler.coffee</a>.</>
-            : <>Your message couldn't be sent. Please try again or email us at <a href="mailto:hola@butler.coffee">hola@butler.coffee</a>.</>}
+            ? <>No se pudo enviar el mensaje. Inténtalo de nuevo o escríbenos a <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.</>
+            : <>Your message couldn't be sent. Please try again or email us at <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.</>}
         </p>
       )}
       <button type="submit" className="btn btn--yellow btn--full btn--lg" disabled={sending}>

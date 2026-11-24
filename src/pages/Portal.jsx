@@ -1,14 +1,15 @@
 import { Link } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
 import Layout from '../components/Layout'
+import { useSettings } from '../data/settingsApi'
 import './Portal.css'
 
-// Replace this with the real Stripe Customer Portal URL
-const STRIPE_PORTAL_URL = 'https://billing.stripe.com/p/login/your_portal_link'
 
 export default function Portal() {
   const { lang } = useLang()
   const isEs = lang === 'es'
+  // Stripe Customer Portal link and contact email come from admin → Site Settings
+  const { portalUrl, contactEmail } = useSettings()
 
   const features = isEs ? [
     { icon: '📦', title: 'Gestiona tu suscripción', desc: 'Cambia de nivel, ajusta el tamaño de bolsa o pausa temporalmente.' },
@@ -45,19 +46,29 @@ export default function Portal() {
                 : 'Manage your coffee subscription, update payment details, and review your history — all in one place, powered by Stripe.'}
             </p>
 
-            <a
-              href={STRIPE_PORTAL_URL}
-              className="btn btn--yellow btn--lg portal-hero__cta"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {isEs ? 'Acceder al Portal →' : 'Access Portal →'}
-            </a>
+            {portalUrl ? (
+              <a
+                href={portalUrl}
+                className="btn btn--yellow btn--lg portal-hero__cta"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {isEs ? 'Acceder al Portal →' : 'Access Portal →'}
+              </a>
+            ) : (
+              <a href={`mailto:${contactEmail}`} className="btn btn--yellow btn--lg portal-hero__cta">
+                {isEs ? 'Escríbenos para gestionarla →' : 'Email us to manage it →'}
+              </a>
+            )}
 
             <p className="portal-hero__note">
-              {isEs
-                ? 'Serás redirigido al portal seguro de Stripe. Introduce el email de tu suscripción para acceder.'
-                : "You'll be redirected to Stripe's secure portal. Enter your subscription email to log in."}
+              {portalUrl
+                ? (isEs
+                  ? 'Serás redirigido al portal seguro de Stripe. Introduce el email de tu suscripción para acceder.'
+                  : "You'll be redirected to Stripe's secure portal. Enter your subscription email to log in.")
+                : (isEs
+                  ? `El portal online llegará pronto. Mientras tanto, escríbenos a ${contactEmail} y lo gestionamos por ti.`
+                  : `Our online portal is coming soon. Until then, email ${contactEmail} and we'll handle it for you.`)}
             </p>
           </div>
         </div>
@@ -117,7 +128,7 @@ export default function Portal() {
             <Link to="/contact" className="btn btn--yellow">
               {isEs ? 'Contactar soporte' : 'Contact support'}
             </Link>
-            <a href="mailto:hola@butler.coffee" className="btn btn--ghost">hola@butler.coffee</a>
+            <a href={`mailto:${contactEmail}`} className="btn btn--ghost">{contactEmail}</a>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useSettings } from '../data/settingsApi'
 import { useLang } from '../context/LangContext'
 import { LEGAL_NAV } from '../data/legal'
 import './Footer.css'
@@ -18,10 +19,11 @@ export default function Footer() {
     { to: '/portal',   label: t('nav_portal') },
   ]
 
+  const settings = useSettings()
   const companyLinks = [
     { to: '/contact', label: t('nav_contact') },
     { href: '/#faq',  label: 'FAQ' },
-    { href: 'mailto:hola@butler.coffee', label: 'hola@butler.coffee' },
+    { href: `mailto:${settings.contactEmail}`, label: settings.contactEmail },
   ]
 
   return (
@@ -63,7 +65,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="footer__bottom">
-          <span className="footer__copy">© {year} Butler Coffee SL — Madrid</span>
+          <span className="footer__copy">© {year} {settings.companyName} — Madrid</span>
 
           {/* Legal links */}
           <nav className="footer__legal" aria-label="Legal">

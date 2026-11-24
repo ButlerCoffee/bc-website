@@ -2,6 +2,7 @@ import { Link, useParams, Navigate } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
 import { getLegalBySlug, LEGAL_NAV } from '../data/legal'
 import Layout from '../components/Layout'
+import { useSettings, fillSettings } from '../data/settingsApi'
 import './Legal.css'
 
 export default function Legal() {
@@ -9,6 +10,8 @@ export default function Legal() {
   const { lang } = useLang()
   const page = getLegalBySlug(slug)
   const isEs = lang === 'es'
+  const settings = useSettings()
+  const fill = t => fillSettings(t, settings)
 
   if (!page) return <Navigate to="/" replace />
 
@@ -45,12 +48,12 @@ export default function Legal() {
               {page.title[lang] || page.title.en}
             </h1>
             <p className="legal-content__updated">
-              {isEs ? 'Última actualización:' : 'Last updated:'} {page.lastUpdated}
+              {isEs ? 'Última actualización:' : 'Last updated:'} {settings.legalUpdated || page.lastUpdated}
             </p>
           </div>
 
           <div className="legal-content__intro">
-            {page.intro[lang] || page.intro.en}
+            {fill(page.intro[lang] || page.intro.en)}
           </div>
 
           <div className="legal-content__sections">
@@ -60,7 +63,7 @@ export default function Legal() {
                   {section.heading[lang] || section.heading.en}
                 </h2>
                 <p className="legal-section__body">
-                  {section.body[lang] || section.body.en}
+                  {fill(section.body[lang] || section.body.en)}
                 </p>
               </div>
             ))}
@@ -89,7 +92,7 @@ export default function Legal() {
                 {isEs
                   ? 'Si tienes preguntas sobre estos términos, contáctanos en '
                   : 'If you have questions about any of these terms, reach us at '}
-                <a href="mailto:hola@butler.coffee">hola@butler.coffee</a>
+                <a href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a>
               </p>
             </div>
           </div>

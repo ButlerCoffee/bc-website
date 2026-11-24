@@ -5,8 +5,8 @@ export const LEGAL_PAGES = [
     title: { en: 'Privacy Policy', es: 'Política de Privacidad' },
     lastUpdated: '1 January 2025',
     intro: {
-      en: 'Butler Coffee SL ("Butler Coffee", "we", "us", or "our") is committed to protecting your personal information and your right to privacy. This Privacy Policy explains how we collect, use, and share information about you when you use our website and services.',
-      es: 'Butler Coffee SL ("Butler Coffee", "nosotros" o "nuestro") se compromete a proteger tu información personal y tu derecho a la privacidad. Esta Política de Privacidad explica cómo recopilamos, usamos y compartimos información sobre ti cuando utilizas nuestro sitio web y servicios.',
+      en: '{company} ("Butler Coffee", "we", "us", or "our") is committed to protecting your personal information and your right to privacy. This Privacy Policy explains how we collect, use, and share information about you when you use our website and services.',
+      es: '{company} ("Butler Coffee", "nosotros" o "nuestro") se compromete a proteger tu información personal y tu derecho a la privacidad. Esta Política de Privacidad explica cómo recopilamos, usamos y compartimos información sobre ti cuando utilizas nuestro sitio web y servicios.',
     },
     sections: [
       {
@@ -26,22 +26,22 @@ export const LEGAL_PAGES = [
       {
         heading: { en: '3. Data Retention', es: '3. Retención de datos' },
         body: {
-          en: 'We retain your personal data for as long as necessary to provide our services and comply with our legal obligations. Subscription data is retained for the duration of your subscription plus 5 years for accounting and legal compliance. You may request deletion of your data at any time by contacting us at hola@butler.coffee.',
+          en: 'We retain your personal data for as long as necessary to provide our services and comply with our legal obligations. Subscription data is retained for the duration of your subscription plus 5 years for accounting and legal compliance. You may request deletion of your data at any time by contacting us at {email}.',
           es: 'Conservamos tus datos personales durante el tiempo necesario para prestar nuestros servicios y cumplir con nuestras obligaciones legales. Los datos de suscripción se conservan durante la duración de tu suscripción más 5 años para el cumplimiento contable y legal.',
         },
       },
       {
         heading: { en: '4. Your Rights (GDPR)', es: '4. Tus derechos (RGPD)' },
         body: {
-          en: 'Under the General Data Protection Regulation (GDPR), you have the right to access, rectify, erase, restrict processing, and port your personal data. You also have the right to object to processing and to withdraw consent at any time. To exercise these rights, contact us at hola@butler.coffee.',
+          en: 'Under the General Data Protection Regulation (GDPR), you have the right to access, rectify, erase, restrict processing, and port your personal data. You also have the right to object to processing and to withdraw consent at any time. To exercise these rights, contact us at {email}.',
           es: 'En virtud del Reglamento General de Protección de Datos (RGPD), tienes derecho a acceder, rectificar, suprimir, restringir el tratamiento y portar tus datos personales. También tienes derecho a oponerte al tratamiento y a retirar tu consentimiento en cualquier momento.',
         },
       },
       {
         heading: { en: '5. Contact', es: '5. Contacto' },
         body: {
-          en: 'If you have any questions about this Privacy Policy or our data practices, please contact our Data Protection Officer at: Butler Coffee SL, Calle de Ejemplo 1, 28001 Madrid, Spain. Email: hola@butler.coffee',
-          es: 'Si tienes alguna pregunta sobre esta Política de Privacidad o nuestras prácticas de datos, contacta con nuestro Responsable de Protección de Datos en: Butler Coffee SL, Calle de Ejemplo 1, 28001 Madrid, España. Email: hola@butler.coffee',
+          en: 'If you have any questions about this Privacy Policy or our data practices, please contact our Data Protection Officer at: {company}[[, {address}]]. Email: {email}',
+          es: 'Si tienes alguna pregunta sobre esta Política de Privacidad o nuestras prácticas de datos, contacta con nuestro Responsable de Protección de Datos en: {company}[[, {address}]]. Email: {email}',
         },
       },
     ],
@@ -51,8 +51,8 @@ export const LEGAL_PAGES = [
     title: { en: 'Cookie Policy', es: 'Política de Cookies' },
     lastUpdated: '1 January 2025',
     intro: {
-      en: 'This Cookie Policy explains how Butler Coffee SL uses cookies and similar tracking technologies when you visit our website. By continuing to use our site, you consent to our use of cookies as described in this policy.',
-      es: 'Esta Política de Cookies explica cómo Butler Coffee SL utiliza cookies y tecnologías de seguimiento similares cuando visitas nuestro sitio web.',
+      en: 'This Cookie Policy explains how {company} uses cookies and similar tracking technologies when you visit our website. By continuing to use our site, you consent to our use of cookies as described in this policy.',
+      es: 'Esta Política de Cookies explica cómo {company} utiliza cookies y tecnologías de seguimiento similares cuando visitas nuestro sitio web.',
     },
     sections: [
       {
@@ -118,8 +118,8 @@ export const LEGAL_PAGES = [
       {
         heading: { en: 'Returns & Freshness Guarantee', es: 'Devoluciones y Garantía de Frescura' },
         body: {
-          en: 'Coffee is a perishable product and we cannot accept returns of opened or used products. However, if your order arrives damaged, incorrect, or you are not satisfied with the quality, please contact us within 7 days of delivery at hola@butler.coffee and we will make it right — whether that\'s a replacement or a credit.',
-          es: 'El café es un producto perecedero y no podemos aceptar devoluciones de productos abiertos o usados. Sin embargo, si tu pedido llega dañado, incorrecto o no estás satisfecho con la calidad, contáctanos en los 7 días posteriores a la entrega en hola@butler.coffee.',
+          en: 'Coffee is a perishable product and we cannot accept returns of opened or used products. However, if your order arrives damaged, incorrect, or you are not satisfied with the quality, please contact us within 7 days of delivery at {email} and we will make it right — whether that\'s a replacement or a credit.',
+          es: 'El café es un producto perecedero y no podemos aceptar devoluciones de productos abiertos o usados. Sin embargo, si tu pedido llega dañado, incorrecto o no estás satisfecho con la calidad, contáctanos en los 7 días posteriores a la entrega en {email}.',
         },
       },
       {
@@ -143,8 +143,8 @@ export const LEGAL_PAGES = [
       {
         heading: { en: '1. Services', es: '1. Servicios' },
         body: {
-          en: 'Butler Coffee SL provides specialty coffee subscription services and coffee equipment sales to customers in Spain, Portugal, and Andorra. Our subscriptions are billed monthly and automatically renewed until cancelled by the customer via the Customer Portal or by contacting us at hola@butler.coffee.',
-          es: 'Butler Coffee SL proporciona servicios de suscripción de café de especialidad y venta de equipos de café a clientes en España, Portugal y Andorra.',
+          en: '{company} provides specialty coffee subscription services and coffee equipment sales to customers in Spain, Portugal, and Andorra. Our subscriptions are billed monthly and automatically renewed until cancelled by the customer via the Customer Portal or by contacting us at {email}.',
+          es: '{company} proporciona servicios de suscripción de café de especialidad y venta de equipos de café a clientes en España, Portugal y Andorra.',
         },
       },
       {
@@ -164,8 +164,8 @@ export const LEGAL_PAGES = [
       {
         heading: { en: '4. Limitation of Liability', es: '4. Limitación de responsabilidad' },
         body: {
-          en: 'To the fullest extent permitted by applicable law, Butler Coffee SL shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly.',
-          es: 'En la máxima medida permitida por la legislación aplicable, Butler Coffee SL no será responsable de ningún daño indirecto, incidental, especial, consecuente o punitivo, ni de ninguna pérdida de beneficios o ingresos.',
+          en: 'To the fullest extent permitted by applicable law, {company} shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly.',
+          es: 'En la máxima medida permitida por la legislación aplicable, {company} no será responsable de ningún daño indirecto, incidental, especial, consecuente o punitivo, ni de ninguna pérdida de beneficios o ingresos.',
         },
       },
       {
@@ -203,15 +203,15 @@ export const LEGAL_PAGES = [
       {
         heading: { en: 'Intellectual Property', es: 'Propiedad intelectual' },
         body: {
-          en: 'All content on this website, including text, images, logos, and graphics, is the property of Butler Coffee SL or its content suppliers and is protected by Spanish and international intellectual property laws. You may not reproduce, distribute, or create derivative works without our express written permission.',
-          es: 'Todo el contenido de este sitio web, incluidos texto, imágenes, logotipos y gráficos, es propiedad de Butler Coffee SL o sus proveedores de contenido y está protegido por las leyes de propiedad intelectual españolas e internacionales.',
+          en: 'All content on this website, including text, images, logos, and graphics, is the property of {company} or its content suppliers and is protected by Spanish and international intellectual property laws. You may not reproduce, distribute, or create derivative works without our express written permission.',
+          es: 'Todo el contenido de este sitio web, incluidos texto, imágenes, logotipos y gráficos, es propiedad de {company} o sus proveedores de contenido y está protegido por las leyes de propiedad intelectual españolas e internacionales.',
         },
       },
       {
         heading: { en: 'Contact', es: 'Contacto' },
         body: {
-          en: 'Butler Coffee SL is a company registered in Spain. Registered address: Calle de Ejemplo 1, 28001 Madrid, Spain. CIF: B-XXXXXXXX. For any legal matters, please contact us at hola@butler.coffee.',
-          es: 'Butler Coffee SL es una empresa registrada en España. Domicilio social: Calle de Ejemplo 1, 28001 Madrid, España. CIF: B-XXXXXXXX. Para cualquier asunto legal, contáctanos en hola@butler.coffee.',
+          en: '{company} is a company registered in Spain.[[ Registered address: {address}.]][[ CIF: {taxId}.]] For any legal matters, please contact us at {email}.',
+          es: '{company} es una empresa registrada en España.[[ Domicilio social: {address}.]][[ CIF: {taxId}.]] Para cualquier asunto legal, contáctanos en {email}.',
         },
       },
     ],

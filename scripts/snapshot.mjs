@@ -42,6 +42,14 @@ async function fetchSheet(url, sheet) {
   return clean(json.data)
 }
 
+async function fetchSettings(url) {
+  try {
+    const res = await fetch(`${url}?sheet=settings`, { redirect: 'follow' })
+    const json = await res.json()
+    return json.ok && json.data && !Array.isArray(json.data) ? json.data : null
+  } catch { return null }
+}
+
 const url = apiUrl()
 if (!url) {
   console.warn('[snapshot] No VITE_BUTLER_API_URL — keeping existing snapshot.')
@@ -49,8 +57,12 @@ if (!url) {
 }
 
 try {
-  const [machines, subs] = await Promise.all([fetchSheet(url, 'machines'), fetchSheet(url, 'subs')])
-  writeFileSync(OUT, JSON.stringify({ fetchedAt: new Date().toISOString(), machines, subs }, null, 1) + '\n')
+  const [machines, subs, settings] = await Promise.all([
+    fetchSheet(url, 'machines'),
+    fetchSheet(url, 'subs'),
+    fetchSettings(url),
+  ])
+  writeFileSync(OUT, JSON.stringify({ fetchedAt: new Date().toISOString(), machines, subs, settings }, null, 1) + '\n')
   console.log(`[snapshot] Saved ${machines.length} machines, ${subs.length} subs.`)
 } catch (err) {
   console.warn(`[snapshot] Fetch failed (${err.message}) — keeping existing snapshot.`)

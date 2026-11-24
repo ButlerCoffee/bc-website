@@ -2,11 +2,13 @@ import { Link } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
 import Layout from '../components/Layout'
 import ContactForm from '../components/ContactForm'
+import { useSettings } from '../data/settingsApi'
 import './Contact.css'
 
 export default function Contact() {
   const { lang } = useLang()
   const isEs = lang === 'es'
+  const settings = useSettings()
 
   return (
     <Layout title={isEs ? 'Contacto' : 'Contact'}>
@@ -49,7 +51,7 @@ export default function Contact() {
                   <span className="contact-info-icon">📧</span>
                   <div>
                     <div className="contact-info-label">Email</div>
-                    <a href="mailto:hola@butler.coffee" className="contact-info-val">hola@butler.coffee</a>
+                    <a href={`mailto:${settings.contactEmail}`} className="contact-info-val">{settings.contactEmail}</a>
                   </div>
                 </div>
                 <div className="contact-info-item">
