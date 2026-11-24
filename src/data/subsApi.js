@@ -28,17 +28,17 @@ import SNAPSHOT from './snapshot.json'
 // ── Per-tier static metadata (visual / display only) ─────────────────────────
 // Keyed by the tier `title` value as stored in the sheet.
 const TIER_META = {
-  'Base Coffee':    { id: 'base',    slug: 'base',    emoji: '🦆', color: '#FFE500', image: '/ducksubs/duck_base_bw.png',     pills: ['Blends', 'Modern Classic'],   featured: false },
-  'Explorer Coffee':{ id: 'explorer',slug: 'explorer',emoji: '🧭', color: '#FFE500', image: '/ducksubs/duck_explorer_bw.png', pills: ['Single Origin', 'Airy & Expressive'], featured: true,  popularLabel: { en: 'Most Popular', es: 'Más Popular' } },
-  'Alpine Coffee':  { id: 'alpine',  slug: 'alpine',  emoji: '⛰️', color: '#a8d8ea', image: '/ducksubs/duck_alpine_bw.png',   pills: ['High Altitude', 'Clean & Complex'],  featured: false },
-  'Summit Coffee':  { id: 'summit',  slug: 'summit',  emoji: '🏔️', color: '#ffd700', image: '/ducksubs/duck_summit_bw.png',   pills: ['Private Stock', 'Unique'],    featured: false },
+  'Base Coffee':    { id: 'base',    slug: 'base',    emoji: '🦆', color: '#FFE500', image: '/ducksubs/duck_base_bw.webp', thumb: '/ducksubs/duck_base_bw-sm.webp',     pills: ['Blends', 'Modern Classic'],   featured: false },
+  'Explorer Coffee':{ id: 'explorer',slug: 'explorer',emoji: '🧭', color: '#FFE500', image: '/ducksubs/duck_explorer_bw.webp', thumb: '/ducksubs/duck_explorer_bw-sm.webp', pills: ['Single Origin', 'Airy & Expressive'], featured: true,  popularLabel: { en: 'Most Popular', es: 'Más Popular' } },
+  'Alpine Coffee':  { id: 'alpine',  slug: 'alpine',  emoji: '⛰️', color: '#a8d8ea', image: '/ducksubs/duck_alpine_bw.webp', thumb: '/ducksubs/duck_alpine_bw-sm.webp',   pills: ['High Altitude', 'Clean & Complex'],  featured: false },
+  'Summit Coffee':  { id: 'summit',  slug: 'summit',  emoji: '🏔️', color: '#ffd700', image: '/ducksubs/duck_summit_bw.webp', thumb: '/ducksubs/duck_summit_bw-sm.webp',   pills: ['Private Stock', 'Unique'],    featured: false },
 }
 
 // Fallback: match by partial title if exact match fails
 function findMeta(title) {
   if (TIER_META[title]) return TIER_META[title]
   const key = Object.keys(TIER_META).find(k => title.toLowerCase().includes(k.split(' ')[0].toLowerCase()))
-  return key ? TIER_META[key] : { id: title.toLowerCase().replace(/\s+/g,'-'), slug: title.toLowerCase().replace(/\s+/g,'-'), emoji: '☕', color: '#FFE500', image: '', pills: [], featured: false }
+  return key ? TIER_META[key] : { id: title.toLowerCase().replace(/\s+/g,'-'), slug: title.toLowerCase().replace(/\s+/g,'-'), emoji: '☕', color: '#FFE500', image: '', thumb: '', pills: [], featured: false }
 }
 
 // ── Adapter: GAS sub row → website tier shape ─────────────────────────────────

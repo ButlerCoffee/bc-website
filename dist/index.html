@@ -21,10 +21,22 @@
     />
 
     <title>Butler Coffee — Specialty Coffee for Workspaces</title>
-    <script type="module" crossorigin src="/assets/index-Dr-DIoOO.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CwkiDsNF.css">
+    <script type="module" crossorigin src="/assets/index-DZsQjZgk.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-B9kpcKB6.css">
   <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
   <body>
     <div id="root"></div>
+
+    <!-- Netlify Forms: static copy of the React contact form so Netlify can
+         detect its fields at build time. The real form posts via fetch. -->
+    <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="contact" />
+      <input name="bot-field" />
+      <input name="name" />
+      <input name="email" type="email" />
+      <input name="company" />
+      <input name="language" />
+      <textarea name="message"></textarea>
+    </form>
   </body>
 </html>

@@ -46,7 +46,7 @@ function TierCard({ tier, lang }) {
       )}
 
       <div className="tier__oval">
-        <img src={tier.image} alt={tier.name} className="tier__duck" />
+        <img src={tier.thumb || tier.image} alt={tier.name} className="tier__duck" loading="lazy" decoding="async" />
       </div>
 
       <h3 className="tier__name">{tier.name}</h3>

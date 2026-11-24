@@ -97,7 +97,7 @@ export default function Subs() {
                 )}
 
                 <div className="sub-card__img-wrap">
-                  <img src={tier.image} alt={tier.name} className="sub-card__img" />
+                  <img src={tier.thumb || tier.image} alt={tier.name} className="sub-card__img" decoding="async" />
                 </div>
 
                 <h2 className="sub-card__name">{tier.name}</h2>

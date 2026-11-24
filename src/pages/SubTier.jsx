@@ -160,7 +160,7 @@ export default function SubTier() {
             {tiers.filter(t => t.id !== tier.id).map(other => (
               <Link key={other.id} to={`/subs/${other.slug}`} className="tier-nav-card">
                 <div className="tier-nav-card__oval">
-                  <img src={other.image} alt={other.name} className="tier-nav-card__duck" />
+                  <img src={other.thumb || other.image} alt={other.name} className="tier-nav-card__duck" loading="lazy" decoding="async" />
                 </div>
                 <div>
                   <div className="tier-nav-card__name">{other.name}</div>
