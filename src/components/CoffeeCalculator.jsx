@@ -80,7 +80,7 @@ export default function CoffeeCalculator() {
     return {
       regularGrams: regularPeople > 0 ? toHalfKilos(g) : 0,
       decafGrams: dg,
-      suggestion: regularPeople > 0 ? splitIntoBags(g).map(b => ({ tier: DEFAULT_TIER, ...b })) : [],
+      suggestion: regularPeople > 0 ? splitIntoBags(g).map(b => ({ tier: b.size === '500g' ? 'explorer' : DEFAULT_TIER, ...b })) : [],
       decafBags: dg > 0 ? splitIntoBags(dg) : [],
     }
   }, [people, decafPeople, intakeLevel, brewMethod])
