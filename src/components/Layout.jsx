@@ -1,6 +1,8 @@
 import { useEffect } from 'react'
 import Nav from './Nav'
 import Footer from './Footer'
+import CartDrawer from './CartDrawer'
+import { CART_ENABLED } from '../context/CartContext'
 import './Layout.css'
 
 const SITE_TITLE = 'Butler Coffee — Specialty Coffee for Workspaces'
@@ -21,6 +23,7 @@ export default function Layout({ children, noFooter = false, title }) {
       <Nav />
       <main className="layout__main">{children}</main>
       {!noFooter && <Footer />}
+      {CART_ENABLED && <CartDrawer />}
     </div>
   )
 }

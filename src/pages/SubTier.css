@@ -246,3 +246,63 @@
 .tier-nav-card__name  { font-family: var(--font-head); font-weight: 800; font-size: 1.05rem; }
 .tier-nav-card__price { font-size: 0.78rem; color: var(--muted); }
 .tier-nav-card__arrow { margin-left: auto; color: var(--muted); font-size: 1.1rem; }
+
+/* ─── Cart buy controls ──────────────────────────────────────────────────── */
+.buy-mode {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.buy-mode__opt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: left;
+  padding: 12px 14px;
+  background: var(--surf2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  color: var(--white);
+  transition: border-color var(--ease), background var(--ease);
+}
+.buy-mode__opt:hover { border-color: rgba(255,255,255,0.2); }
+.buy-mode__opt.on { border-color: var(--yellow); background: var(--yellow-dim); }
+.buy-mode__label { font-family: var(--font-head); font-weight: 800; font-size: 0.9rem; }
+.buy-mode__hint  { font-size: 0.7rem; color: var(--muted); }
+
+.buy-opts {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+.buy-opts__grind { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.buy-opts__qty   { display: flex; flex-direction: column; }
+.buy-opts select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  background: var(--surf2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23fff' stroke-opacity='.5' fill='none' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 14px center;
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  padding: 9px 34px 9px 14px;
+  outline: none;
+}
+.buy-opts select:focus { border-color: var(--yellow-30); }
+.buy-opts select option { background: #1a1a1a; }
+
+.buy-conflict {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--yellow-dim);
+  border: 1px solid var(--yellow-30);
+  border-radius: var(--r-md);
+  padding: 14px;
+}
+.buy-conflict p { font-size: 0.8rem; color: var(--white); line-height: 1.5; }
