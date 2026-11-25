@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { loadStripe } from '@stripe/stripe-js'
 import {
-  CheckoutElementsProvider, useCheckoutElements, PaymentElement, ShippingAddressElement,
+  CheckoutElementsProvider, useCheckoutElements, PaymentElement, ShippingAddressElement, TaxIdElement,
 } from '@stripe/react-stripe-js/checkout'
 import Layout from '../components/Layout'
 import { useLang } from '../context/LangContext'
@@ -47,6 +47,7 @@ const TXT = {
   en: {
     title: 'Checkout', back: '← Back to the store', contact: 'Contact', email: 'Email',
     shipping: 'Shipping address', payment: 'Payment', summary: 'Your order',
+    business: "I'm buying for a company", businessHint: 'Add your company name and VAT number (NIF/CIF) for a company invoice.',
     sub: 'Subscription', once: 'One-off order',
     subtotal: 'Subtotal', ship: 'Shipping', free: 'Free', discount: 'Discount', tax: 'incl. VAT',
     total: 'Total today', then: (x) => `Then ${x} / month`,
@@ -67,6 +68,7 @@ const TXT = {
   es: {
     title: 'Pago', back: '← Volver a la tienda', contact: 'Contacto', email: 'Email',
     shipping: 'Dirección de envío', payment: 'Pago', summary: 'Tu pedido',
+    business: 'Compro para una empresa', businessHint: 'Añade el nombre de la empresa y el NIF/CIF para recibir una factura a nombre de la empresa.',
     sub: 'Suscripción', once: 'Compra única',
     subtotal: 'Subtotal', ship: 'Envío', free: 'Gratis', discount: 'Descuento', tax: 'IVA incluido',
     total: 'Total hoy', then: (x) => `Después ${x} / mes`,
@@ -188,6 +190,7 @@ function CheckoutForm({ tx, lang, cartItems }) {
   const [promo, setPromo] = useState('')
   const [promoMsg, setPromoMsg] = useState('')
   const [busy, setBusy] = useState(false)
+  const [business, setBusiness] = useState(false)
   const [error, setError] = useState('')
 
   if (state.type === 'loading') return <p className="co-loading">{tx.loading}</p>
@@ -255,6 +258,16 @@ function CheckoutForm({ tx, lang, cartItems }) {
         <fieldset className="co-step">
           <legend>{tx.shipping}</legend>
           <ShippingAddressElement options={{ fields: { phone: 'always' } }} />
+          <label className="co-business">
+            <input type="checkbox" checked={business} onChange={e => setBusiness(e.target.checked)} />
+            <span>{tx.business}</span>
+          </label>
+          {business && (
+            <div className="co-business__fields">
+              <p className="co-business__hint">{tx.businessHint}</p>
+              <TaxIdElement options={{ visibility: 'always', validation: { businessName: { required: 'always' }, taxId: { required: 'always' } } }} />
+            </div>
+          )}
         </fieldset>
 
         <fieldset className="co-step">

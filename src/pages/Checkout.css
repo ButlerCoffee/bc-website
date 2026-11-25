@@ -200,3 +200,9 @@
 /* No site header on checkout pages */
 .layout--bare .co { padding-top: 48px; }
 @media (min-width: 768px) { .layout--bare .co { padding-top: 64px; } }
+
+/* Company purchase: business name + VAT number for a company invoice */
+.co-business { display: flex; align-items: center; gap: 10px; margin-top: 16px; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
+.co-business input { width: 18px; height: 18px; accent-color: var(--yellow); cursor: pointer; }
+.co-business__fields { margin-top: 12px; }
+.co-business__hint { font-size: 0.8rem; color: var(--subtle); margin-bottom: 10px; line-height: 1.5; }

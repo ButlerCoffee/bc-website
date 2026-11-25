@@ -26,7 +26,7 @@ const INTAKE_LEVELS = [
 
 const DECAF_GRAMS_PER_3 = 250            // 250g of decaf per 3 decaf drinkers, per month
 const SIZE_GRAMS = { '200g': 200, '250g': 250, '500g': 500, '1kg': 1000 }
-const DEFAULT_TIER = 'explorer'
+const DEFAULT_TIER = 'base'
 
 /** Round to the nearest half kilo (min 500g): suggestions only use 1kg and 500g bags. */
 const toHalfKilos = grams => Math.max(500, Math.round(grams / 500) * 500)
@@ -52,8 +52,8 @@ export default function CoffeeCalculator() {
   const cart = useCart()
   const { tiers } = useTiers()
 
-  const [people, setPeople] = useState(12)
-  const [intake, setIntake] = useState(3)
+  const [people, setPeople] = useState(8)
+  const [intake, setIntake] = useState(2)
   const [brew, setBrew] = useState('unsure')
   const [decafOn, setDecafOn] = useState(false)
   const [decaf, setDecaf] = useState(3)

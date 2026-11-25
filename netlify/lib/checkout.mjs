@@ -176,6 +176,9 @@ export async function buildSessionParams({ type, items, lang }, origin) {
     phone_number_collection: { enabled: true },
     billing_address_collection: 'auto',
     allow_promotion_codes: true,
+    // Company buyers: business name + VAT number (NIF/CIF) appear on the invoice
+    name_collection: { business: { enabled: true, optional: true } },
+    tax_id_collection: { enabled: true },
     locale: lang,
     return_url: `${origin}/order/complete?session_id={CHECKOUT_SESSION_ID}`,
     metadata,
@@ -194,6 +197,8 @@ export async function buildSessionParams({ type, items, lang }, origin) {
   } else {
     params.mode = 'payment'
     params.customer_creation = 'always'
+    // Paid invoice PDF for one-off orders (subscriptions get invoices automatically)
+    params.invoice_creation = { enabled: true, invoice_data: { metadata } }
     params.payment_intent_data = { metadata }
     params.shipping_options = [{
       shipping_rate_data: {
