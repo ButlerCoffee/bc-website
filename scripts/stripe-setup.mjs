@@ -23,6 +23,8 @@ const CATALOG = {
   explorer: { name: 'Explorer Coffee', sizes: { '250g': 15, '500g': 26, '1kg': 50 } },
   alpine:   { name: 'Alpine Coffee',   sizes: { '250g': 18, '500g': 34, '1kg': 65 } },
   summit:   { name: 'Summit Coffee',   sizes: { '200g': 30 } },
+  // Decaf: subscription only (calculator), priced like Explorer
+  decaf:    { name: 'Decaf Coffee',    sizes: { '250g': 15, '500g': 26, '1kg': 50 }, subOnly: true },
 }
 
 async function existing(lookupKey) {
@@ -46,10 +48,10 @@ async function ensurePrice({ lookupKey, productName, amount, recurring, metadata
   console.log(`  + ${lookupKey} → ${price.id}`)
 }
 
-for (const [tier, { name, sizes }] of Object.entries(CATALOG)) {
+for (const [tier, { name, sizes, subOnly }] of Object.entries(CATALOG)) {
   console.log(name)
   for (const [size, eur] of Object.entries(sizes)) {
-    await ensurePrice({
+    if (!subOnly) await ensurePrice({
       lookupKey: `bc_${tier}_${size}_once`, productName: `${name} | ${size}`,
       amount: eur, recurring: false, metadata: { tier, size, type: 'one_off' },
     })

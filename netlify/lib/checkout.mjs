@@ -12,10 +12,10 @@ export const SHIP_COUNTRIES = ['ES', 'PT', 'AD']
 export const FREE_SHIPPING_FROM = 3000       // cents
 export const SHIPPING_FEE = 500              // cents
 export const SUB_SHIPPING_KEY = 'bc_shipping_monthly'
-export const MAX_QTY = 10
+export const MAX_QTY = 40
 export const MAX_LINES = 12
 
-const TIERS = ['base', 'explorer', 'alpine', 'summit']
+const TIERS = ['base', 'explorer', 'alpine', 'summit', 'decaf']   // decaf: subscriptions only (calculator)
 const SIZES = ['200g', '250g', '500g', '1kg']
 const GRINDS = ['whole', 'extra-coarse', 'coarse', 'medium-coarse', 'medium', 'medium-fine', 'fine', 'extra-fine']
 
@@ -70,7 +70,7 @@ export function parseCart(body) {
       return { type: 'once', productId: String(i.productId), grind: i.grind || '', qty }
     }
     if (!['sub', 'once'].includes(i?.type) || !TIERS.includes(i?.tierId) || !SIZES.includes(i?.size) ||
-        !GRINDS.includes(i?.grind)) {
+        !GRINDS.includes(i?.grind) || (i.tierId === 'decaf' && i.type !== 'sub')) {
       throw new HttpError(400, 'invalid_item')
     }
     return { type: i.type, tierId: i.tierId, size: i.size, grind: i.grind, qty }

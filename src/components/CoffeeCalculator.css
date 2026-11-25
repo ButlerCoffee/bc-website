@@ -218,3 +218,109 @@
   gap: 12px;
   flex-wrap: wrap;
 }
+
+/* ── Bag plan ───────────────────────────────────────────────────────────── */
+.calc-plan {
+  margin-top: 22px;
+  padding: 16px;
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.calc-plan__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.calc-plan__reset {
+  background: none; border: none; color: var(--yellow);
+  font-size: 0.72rem; font-weight: 600; text-transform: none; letter-spacing: 0;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.calc-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr) auto minmax(54px, auto) 24px;
+  gap: 8px;
+  align-items: center;
+}
+.calc-row select {
+  width: 100%;
+  min-width: 0;
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  padding: 8px 10px;
+  outline: none;
+}
+.calc-row select:focus { border-color: var(--yellow-30); }
+.calc-row select option { background: #1a1a1a; }
+.calc-row .qty button { width: 28px; height: 28px; }
+.calc-row__price { text-align: right; font-family: var(--font-head); font-weight: 800; font-size: 0.92rem; }
+.calc-row__remove {
+  width: 24px; height: 24px; border-radius: var(--r-pill);
+  border: none; background: none; color: var(--subtle); font-size: 1.1rem; line-height: 1;
+}
+.calc-row__remove:hover { color: var(--white); background: rgba(255,255,255,0.06); }
+.calc-row--decaf { padding: 8px 10px; border-radius: var(--r-md); background: var(--yellow-dim); }
+.calc-row__label { font-size: 0.85rem; font-weight: 600; }
+.calc-plan__add {
+  align-self: flex-start;
+  background: none;
+  border: 1px dashed var(--border);
+  border-radius: var(--r-pill);
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 7px 14px;
+}
+.calc-plan__add:hover { color: var(--white); border-color: rgba(255,255,255,0.25); }
+.calc-match { font-size: 0.8rem; font-weight: 600; padding-top: 4px; }
+.calc-match--ok    { color: #7ee2a8; }
+.calc-match--short { color: #ffb74d; }
+.calc-match--over  { color: var(--muted); }
+
+.calc-total {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 12px;
+  margin: 18px 0 14px;
+  font-size: 0.88rem;
+}
+.calc-total dt { color: var(--muted); }
+.calc-total dd { text-align: right; font-weight: 600; }
+.calc-total .calc-total__sum {
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-head);
+  font-weight: 900;
+  font-size: 1.25rem;
+  color: var(--white);
+}
+.calc-cta .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+@media (max-width: 420px) {
+  .calc-row { grid-template-columns: minmax(0, 1fr) auto auto; }
+  .calc-row > select:first-child { grid-column: 1 / -1; }
+  .calc-row__price { grid-column: 1 / 3; text-align: left; }
+  .calc-row__remove { justify-self: end; }
+}
+
+/* Decaf: a small toggle that opens the slider */
+.calc-decaf__add { align-self: flex-start; }
+.calc-decaf__remove {
+  margin-top: 8px; background: none; border: 0; padding: 0; cursor: pointer;
+  color: var(--subtle); font-size: 0.75rem; font-weight: 600;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.calc-decaf__remove:hover { color: var(--white); }

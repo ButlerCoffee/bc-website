@@ -15,7 +15,7 @@ import { createContext, useContext, useState, useEffect, useCallback, useMemo } 
 export const CART_ENABLED =
   import.meta.env.DEV || import.meta.env.VITE_CART_ENABLED === 'true'
 
-export const MAX_QTY = 10
+export const MAX_QTY = 40   // bags per line (calculator plans for big teams can need 10+)
 export const FREE_SHIPPING_FROM = 30
 export const SHIPPING_FEE = 5
 
@@ -112,6 +112,29 @@ export function CartProvider({ children }) {
     return true
   }, [cartType])
 
+  /**
+   * Adds several items at once (e.g. the calculator's bag plan). All must be the
+   * same type. Returns false if the cart holds the other type, unless { replace: true }.
+   */
+  const addMany = useCallback((list, { replace = false } = {}) => {
+    const clean = sanitize(list)
+    if (!clean.length) return false
+    const type = clean[0].type
+    if (clean.some(i => i.type !== type)) return false
+    if (cartType && cartType !== type && !replace) return false
+    setItems(prev => {
+      let next = prev[0] && prev[0].type !== type ? [] : [...prev]
+      for (const it of clean) {
+        const k = itemKey(it)
+        const at = next.findIndex(i => itemKey(i) === k)
+        if (at >= 0) next[at] = { ...next[at], qty: Math.min(MAX_QTY, next[at].qty + it.qty) }
+        else next.push(it)
+      }
+      return next
+    })
+    return true
+  }, [cartType])
+
   const setQty = useCallback((key, qty) => {
     const n = Math.floor(Number(qty))
     setItems(prev => n < 1
@@ -127,8 +150,8 @@ export function CartProvider({ children }) {
   const count = useMemo(() => items.reduce((n, i) => n + i.qty, 0), [items])
 
   const value = useMemo(() => ({
-    items, cartType, count, isOpen, lastAdded, add, setQty, remove, clear, open, close, itemKey,
-  }), [items, cartType, count, isOpen, lastAdded, add, setQty, remove, clear, open, close])
+    items, cartType, count, isOpen, lastAdded, add, addMany, setQty, remove, clear, open, close, itemKey,
+  }), [items, cartType, count, isOpen, lastAdded, add, addMany, setQty, remove, clear, open, close])
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }
@@ -137,6 +160,21 @@ export const useCart = () => {
   const ctx = useContext(CartContext)
   if (!ctx) throw new Error('useCart must be used inside CartProvider')
   return ctx
+}
+
+/**
+ * Decaf isn't a tier on the site (only offered through the calculator):
+ * priced like Explorer, shown with its own name.
+ */
+export function decafTier(tiers, lang = 'en') {
+  const explorer = tiers.find(t => t.id === 'explorer')
+  if (!explorer) return null
+  return {
+    id: 'decaf', slug: 'decaf', name: lang === 'es' ? 'Café descafeinado' : 'Decaf Coffee',
+    image: explorer.image, thumb: explorer.thumb,
+    sizes: explorer.sizes.filter(s => ['250g', '500g', '1kg'].includes(s.label)),
+    href: '/subscriptions#calculator',
+  }
 }
 
 /**
@@ -155,13 +193,13 @@ export function priceCart(items, tiers, products = [], lang = 'en') {
         href: `/store/product/${p.slug}`, sizeLabel: p.size || '',
       }
     }
-    const tier = tiers.find(t => t.id === i.tierId)
+    const tier = i.tierId === 'decaf' ? decafTier(tiers, lang) : tiers.find(t => t.id === i.tierId)
     const size = tier?.sizes.find(s => s.label === i.size)
     if (!tier || !size) return null
     return {
       ...i, key: itemKey(i), tier, unitPrice: size.price, lineTotal: size.price * i.qty,
       name: tier.name, image: tier.thumb || tier.image,
-      href: i.type === 'sub' ? `/subscriptions/${tier.slug}` : `/store/coffee/${tier.slug}`, sizeLabel: i.size,
+      href: tier.href || (i.type === 'sub' ? `/subscriptions/${tier.slug}` : `/store/coffee/${tier.slug}`), sizeLabel: i.size,
     }
   }).filter(Boolean)
 
