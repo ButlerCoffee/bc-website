@@ -23,7 +23,7 @@ export const lookupKey = (tier, size, type) => `bc_${tier}_${size}_${type}`
 
 let _stripe
 export function stripe() {
-  const key = process.env.STRIPE_SECRET_KEY
+  const key = (process.env.STRIPE_SECRET_KEY || '').trim()
   if (!key) throw new HttpError(500, 'not_configured')
   return (_stripe ||= new Stripe(key))
 }
