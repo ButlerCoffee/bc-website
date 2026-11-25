@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link, useParams, Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useParams, Navigate, useSearchParams, useLocation } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
 import { useTiers, getTierBySlug } from '../data/subsApi'
 import { renderMarkdown } from '../data/blogApi'
@@ -15,12 +15,28 @@ export default function SubTier() {
   const tier = getTierBySlug(tiers, slug)
   const isEs = lang === 'es'
 
-  const [size, setSize] = useState(() => tier?.sizes?.[0]?.label || '')
+  const [params] = useSearchParams()
+  const { hash } = useLocation()
+  // ?size=…&type=sub|once (from the home page cards) pre-select the buy card
+  const [size, setSize] = useState(() => {
+    const wanted = params.get('size')
+    return tier?.sizes?.some(s => s.label === wanted) ? wanted : (tier?.sizes?.[0]?.label || '')
+  })
   const cart = useCart()
-  const [mode, setMode] = useState(() => cart.cartType || 'sub')   // 'sub' | 'once'
+  const [mode, setMode] = useState(() => {
+    const wanted = params.get('type')
+    return ['sub', 'once'].includes(wanted) ? wanted : (cart.cartType || 'sub')
+  })   // 'sub' | 'once'
   const [grind, setGrind] = useState('whole')
   const [qty, setQty] = useState(1)
   const conflict = cart.cartType && cart.cartType !== mode
+
+  useEffect(() => {
+    if (hash !== '#buy') return
+    // Wait a moment for images/layout to settle, then jump to the buy card
+    const t = setTimeout(() => document.getElementById('buy')?.scrollIntoView({ block: 'start' }), 250)
+    return () => clearTimeout(t)
+  }, [hash, slug])
 
   // While loading don't flash-redirect; once loaded redirect if slug unknown
   if (loading && !tier) return null
@@ -57,7 +73,7 @@ export default function SubTier() {
               />
             </div>
 
-            <div className="tier-hero__buy">
+            <div className="tier-hero__buy" id="buy">
               <div className="tier-buy-card">
                 {tier.featured && (
                   <div className="tier-buy-card__pop">{tier.popularLabel?.[lang] || 'Most Popular'}</div>

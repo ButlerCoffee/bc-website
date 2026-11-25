@@ -306,3 +306,6 @@
   padding: 14px;
 }
 .buy-conflict p { font-size: 0.8rem; color: var(--white); line-height: 1.5; }
+
+/* Home-page Subscribe/Buy jump here; stop below the fixed nav */
+#buy { scroll-margin-top: calc(var(--nav-h) + 16px); }

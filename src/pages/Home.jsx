@@ -4,6 +4,7 @@ import { useLang } from '../context/LangContext'
 import { useTiers } from '../data/subsApi'
 import { useMachines } from '../data/machinesApi'
 import { fmtEur } from '../data/format'
+import { CART_ENABLED } from '../context/CartContext'
 import { getFaqs } from '../data/faqApi'
 import { useFeaturedPosts, formatDate, normalizeDriveUrl } from '../data/blogApi'
 import Layout from '../components/Layout'
@@ -85,13 +86,27 @@ function TierCard({ tier, lang }) {
       </div>
 
       <div className="tier__actions">
-        <a href={stripeLink} className="tier__cta">
-          {lang === 'es' ? 'Suscribirme' : 'Subscribe'}
-        </a>
-        {onceLink && (
-          <a href={onceLink} className="tier__once">
-            {lang === 'es' ? 'Comprar' : 'Buy'}
-          </a>
+        {CART_ENABLED ? (
+          <>
+            {/* Go to the coffee's page with type + size pre-selected (grind is chosen there) */}
+            <Link to={`/subs/${tier.slug}?type=sub&size=${encodeURIComponent(size)}#buy`} className="tier__cta">
+              {lang === 'es' ? 'Suscribirme' : 'Subscribe'}
+            </Link>
+            <Link to={`/subs/${tier.slug}?type=once&size=${encodeURIComponent(size)}#buy`} className="tier__once">
+              {lang === 'es' ? 'Comprar' : 'Buy'}
+            </Link>
+          </>
+        ) : (
+          <>
+            <a href={stripeLink} className="tier__cta">
+              {lang === 'es' ? 'Suscribirme' : 'Subscribe'}
+            </a>
+            {onceLink && (
+              <a href={onceLink} className="tier__once">
+                {lang === 'es' ? 'Comprar' : 'Buy'}
+              </a>
+            )}
+          </>
         )}
         <Link to={`/subs/${tier.slug}`} className="tier__detail-link">
           {lang === 'es' ? 'Ver detalles' : 'Learn more'}

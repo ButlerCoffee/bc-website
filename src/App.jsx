@@ -17,10 +17,10 @@ import VsPods     from './pages/VsPods'
 import Checkout   from './pages/Checkout'
 import OrderComplete from './pages/OrderComplete'
 
-// Scroll to top on route change
+// Scroll to top on route change (pages linked with a #section scroll there themselves)
 function ScrollReset() {
-  const { pathname } = useLocation()
-  useEffect(() => { window.scrollTo(0, 0) }, [pathname])
+  const { pathname, hash } = useLocation()
+  useEffect(() => { if (!hash) window.scrollTo(0, 0) }, [pathname, hash])
   return null
 }
 
