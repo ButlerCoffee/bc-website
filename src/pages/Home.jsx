@@ -90,7 +90,7 @@ function TierCard({ tier, lang }) {
         </a>
         {onceLink && (
           <a href={onceLink} className="tier__once">
-            {lang === 'es' ? 'Comprar una vez' : 'Buy once'}
+            {lang === 'es' ? 'Comprar' : 'Buy'}
           </a>
         )}
         <Link to={`/subs/${tier.slug}`} className="tier__detail-link">

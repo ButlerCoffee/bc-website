@@ -118,9 +118,11 @@ export default function SubTier() {
                 )}
                 {onceLink && (
                   <p className="tier-buy-card__legal">
-                    {isEs
-                      ? 'Una bolsa, sin suscripción. Envío 5€, gratis desde 30€.'
-                      : 'One bag, no subscription. Shipping €5, free from €30.'}
+                    {currentSize.price >= 30
+                      ? (isEs ? 'Sin suscripción. Envío gratis.' : 'No subscription. Free shipping.')
+                      : (isEs
+                        ? 'Sin suscripción. Envío 5€, gratis desde 30€ con el código ENVIO30.'
+                        : 'No subscription. Shipping €5, free from €30 with code ENVIO30.')}
                   </p>
                 )}
               </div>

@@ -34,7 +34,7 @@ const TIER_META = {
   'Summit Coffee':  { id: 'summit',  slug: 'summit',  emoji: '🏔️', color: '#ffd700', image: '/ducksubs/duck_summit_bw.webp', thumb: '/ducksubs/duck_summit_bw-sm.webp',   pills: ['Private Stock', 'Unique'],    featured: false },
 }
 
-// ── One-off ("Buy once") Stripe payment links, per tier and size ─────────────
+// ── One-off ("Buy") Stripe payment links, per tier and size ─────────────
 // One bag per checkout; €5 shipping under €30, free from €30 (see Stripe).
 export const ONE_OFF_LINKS = {
   base:     { '250g': 'https://buy.stripe.com/7sY28q1PncLC6YldijaZi0v', '500g': 'https://buy.stripe.com/6oU6oG0LjbHyciF0vxaZi0w', '1kg': 'https://buy.stripe.com/00w9AS2Tr4f6aaxemnaZi0x' },
