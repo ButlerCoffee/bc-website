@@ -160,6 +160,7 @@ export const handler = (method, fn) => async (req) => {
   } catch (err) {
     if (err instanceof HttpError) return json(err.status, { error: err.code })
     console.error('[checkout]', err?.type || '', err?.message)
-    return json(502, { error: 'stripe_error' })
+    // Error category only (e.g. StripePermissionError) — never the message or key
+    return json(502, { error: 'stripe_error', type: err?.type || 'unknown', code: err?.code || null })
   }
 }
