@@ -4,8 +4,7 @@ import Layout from '../components/Layout'
 import ContactSection from '../components/ContactSection'
 import './About.css'
 
-// Replace this with a real image URL when available
-const ABOUT_IMAGE = ''
+const ABOUT_IMAGE = '/images/about-team.jpg'
 
 export default function About() {
   const { lang } = useLang()
@@ -24,14 +23,12 @@ export default function About() {
             <span className="badge">{isEs ? 'Nuestra historia' : 'Our story'}</span>
           </div>
           <h1 className="page-hero__title">
-            {isEs
-              ? <>Café de especialidad,<br /><em>con propósito.</em></>
-              : <>Specialty coffee,<br /><em>with purpose.</em></>}
+            {isEs ? 'Haz lo que te gusta y diviértete haciéndolo.' : 'Love what you do and have fun doing it.'}
           </h1>
           <p className="page-hero__sub">
             {isEs
-              ? 'Somos Butler Coffee: una empresa de Madrid que lleva café de especialidad a los espacios de trabajo que lo merecen.'
-              : 'We are Butler Coffee — a Madrid-based company bringing specialty coffee to the workspaces that deserve it.'}
+              ? 'Eso explica el pato.'
+              : 'That explains the duck.'}
           </p>
         </div>
       </section>
@@ -69,8 +66,8 @@ export default function About() {
             </p>
             <p>
               {isEs
-                ? 'Con base en Madrid, servimos a oficinas, estudios y equipos de toda España. Si crees que tu espacio merece un café mejor, estás en el lugar correcto.'
-                : 'Based in Madrid, we serve offices, studios, and teams across Spain. If you think your workspace deserves better coffee, you\'re in the right place.'}
+                ? 'Desde Madrid, servimos café en toda la península ibérica y más allá. Si crees que tu espacio merece un café mejor, estás en el lugar correcto.'
+                : 'From Madrid, we serve coffee across the Iberian Peninsula and beyond. If you think your workspace deserves better coffee, you\'re in the right place.'}
             </p>
           </div>
 

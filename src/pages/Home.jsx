@@ -163,15 +163,15 @@ export default function Home() {
         <div className="hero">
           <div className="hero__text">
             <span className="badge hero__badge">
-              {isEs ? 'Café de pato madre.' : 'Ducking good coffee.'}
+              {isEs ? 'Café de pato madre' : 'Ducking good coffee'}
             </span>
             <h1 className="hero__headline">
               {isEs ? 'Impulsa tu espacio.' : 'Fuel your space.'}
             </h1>
             <p className="hero__sub">
               {isEs
-                ? 'Elige tu nivel y cuánto café quieres. Te lo llevamos a casa o a la oficina a principios de cada mes.'
-                : 'Choose your level and how much coffee you’d like. We’ll deliver it to your home or office at the start of each month.'}
+                ? 'Un buen café alegra el día. Suscríbete y recibe café de especialidad seleccionado a mano a principios de cada mes.'
+                : 'Better coffee makes for brighter days. Subscribe to get handpicked specialty coffee delivered to you at the start of each month.'}
             </p>
             <div className="hero__actions">
               <Link to="/subscriptions" className="btn btn--yellow btn--lg hero__cta-main">
@@ -194,8 +194,8 @@ export default function Home() {
             <h2 className="section-title">{isEs ? 'Elige tu Aventura' : 'Choose Your Adventure'}</h2>
             <p className="section-sub">
               {isEs
-                ? 'Tú eliges el nivel; nosotros seleccionamos el café cada mes.'
-                : 'You choose the tier. We handpick the coffee every month.'}
+                ? 'Cuatro formas de descubrir el café de especialidad. Encuentra la que va contigo.'
+                : 'Four ways to explore specialty coffee. Find the one that feels like you.'}
             </p>
           </div>
         </div>
@@ -255,8 +255,8 @@ export default function Home() {
             </h2>
             <p className="section-sub">
               {isEs
-                ? 'Tú eliges el nivel y la cantidad. Nosotros seleccionamos el café, lo tostamos y te lo enviamos cada mes.'
-                : 'You choose the tier and how much. We handpick the coffee, roast it fresh and ship it every month.'}
+                ? 'Configura tu suscripción una vez. Nosotros nos encargamos del café cada mes.'
+                : 'Set up your subscription once. We’ll take care of the coffee every month.'}
             </p>
           </div>
 
@@ -309,8 +309,8 @@ export default function Home() {
             </h2>
             <p className="section-sub">
               {isEs
-                ? 'Trabajamos con los mejores del sector para que tu equipo pueda preparar un café excelente, cada día.'
-                : "We partner with the best in the business so your team can brew great coffee — every single day."}
+                ? 'Trabajamos con los mejores del sector para que tu equipo prepare un café excelente cada vez.'
+                : 'We partner with the best in the business so your team can brew great coffee every time.'}
             </p>
           </div>
 

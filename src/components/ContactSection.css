@@ -14,3 +14,7 @@
   margin-bottom: 40px;
   font-size: 1rem;
 }
+
+.contact-section__phone { margin-top: 14px; font-size: 0.95rem; color: var(--muted); }
+.contact-section__phone a { color: var(--yellow); font-weight: 700; text-decoration: none; }
+.contact-section__phone a:hover { text-decoration: underline; }

@@ -3,6 +3,7 @@ import { useLang } from '../context/LangContext'
 import Layout from '../components/Layout'
 import ContactForm from '../components/ContactForm'
 import { useSettings } from '../data/settingsApi'
+import { PHONE, telHref } from '../data/contact'
 import './Contact.css'
 
 export default function Contact() {
@@ -23,7 +24,7 @@ export default function Contact() {
             <span className="badge">{isEs ? 'Contacto' : 'Contact'}</span>
           </div>
           <h1 className="page-hero__title">
-            {isEs ? <>Hablemos <em>del café.</em></> : <>Let's talk <em>coffee.</em></>}
+            {isEs ? 'Hablemos.' : "Let's talk."}
           </h1>
           <p className="page-hero__sub">
             {isEs
@@ -52,6 +53,13 @@ export default function Contact() {
                   <div>
                     <div className="contact-info-label">Email</div>
                     <a href={`mailto:${settings.contactEmail}`} className="contact-info-val">{settings.contactEmail}</a>
+                  </div>
+                </div>
+                <div className="contact-info-item">
+                  <span className="contact-info-icon">📞</span>
+                  <div>
+                    <div className="contact-info-label">{isEs ? 'Teléfono' : 'Phone'}</div>
+                    <a href={telHref()} className="contact-info-val">{PHONE}</a>
                   </div>
                 </div>
                 <div className="contact-info-item">
