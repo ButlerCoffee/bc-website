@@ -19,6 +19,7 @@ import StoreCoffee  from './pages/StoreCoffee'
 import StoreProducts from './pages/StoreProducts'
 import ProductPage  from './pages/ProductPage'
 import OrderComplete from './pages/OrderComplete'
+import Calculator from './pages/Calculator'
 
 // Scroll to top on route change, or to #section when the link has one
 function ScrollReset() {
@@ -47,6 +48,7 @@ export default function App() {
         <Route path="/"                   element={<Home />} />
         {/* Subscriptions */}
         <Route path="/subscriptions"        element={<Subs />} />
+        <Route path="/calculator"           element={<Calculator />} />
         <Route path="/subscriptions/:tier"  element={<SubTier key="sub" fixedMode="sub" />} />
 
         {/* Store */}
