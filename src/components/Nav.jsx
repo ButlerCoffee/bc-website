@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
 import { useCart, CART_ENABLED } from '../context/CartContext'
+import { useStoreSections } from './StoreNav'
 import './Nav.css'
 
 const LOGO_URL = '/BC_outlineLogo.svg'
@@ -9,13 +10,16 @@ const LOGO_URL = '/BC_outlineLogo.svg'
 export default function Nav() {
   const { lang, switchLang, t } = useLang()
   const cart = useCart()
+  const storeSections = useStoreSections()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const drawerRef = useRef(null)
   const location = useLocation()
 
   // Close drawer on route change
-  useEffect(() => { setOpen(false) }, [location])
+  useEffect(() => {
+    setOpen(false)
+  }, [location])
 
   // Scroll shadow
   useEffect(() => {
@@ -42,11 +46,14 @@ export default function Nav() {
     return () => { document.body.style.overflow = '' }
   }, [open])
 
+  // Single menu items; Goods appears only once it has a product
+  const hasGoods = storeSections.some(s => s.to === '/store/goods')
   const navLinks = [
-    { to: '/subs',     label: t('nav_coffee') },
-    { to: '/machines', label: t('nav_machines') },
+    { to: '/store/coffee',   label: t('nav_coffee') },
+    { to: '/subscriptions',  label: t('nav_subscriptions') },
+    { to: '/store/machines', label: t('nav_machines') },
+    ...(hasGoods ? [{ to: '/store/goods', label: t('nav_goods') }] : []),
     { to: '/blog',     label: t('nav_blog') },
-    { to: '/about',    label: t('nav_about') },
     { to: '/contact',  label: t('nav_contact') },
     { to: '/portal',   label: t('nav_portal') },
   ]
@@ -64,9 +71,7 @@ export default function Nav() {
         <ul className="nav__links">
           {navLinks.map(({ to, label }) => (
             <li key={to}>
-              <NavLink to={to} className={({ isActive }) => isActive ? 'active' : ''}>
-                {label}
-              </NavLink>
+              <NavLink to={to} className={({ isActive }) => isActive ? 'active' : ''}>{label}</NavLink>
             </li>
           ))}
         </ul>
@@ -77,7 +82,6 @@ export default function Nav() {
             <button className={`lang-btn ${lang === 'en' ? 'active' : ''}`} onClick={() => switchLang('en')}>EN</button>
             <button className={`lang-btn ${lang === 'es' ? 'active' : ''}`} onClick={() => switchLang('es')}>ES</button>
           </div>
-          <Link to="/subs" className="btn btn--yellow btn--sm nav__cta">{t('nav_cta')}</Link>
           {CART_ENABLED && (
             <button
               className="nav__cart"
@@ -114,9 +118,6 @@ export default function Nav() {
             <button className={`lang-btn ${lang === 'en' ? 'active' : ''}`} onClick={() => switchLang('en')}>EN</button>
             <button className={`lang-btn ${lang === 'es' ? 'active' : ''}`} onClick={() => switchLang('es')}>ES</button>
           </div>
-          <Link to="/subs" className="btn btn--yellow btn--full" style={{ marginTop: 8 }}>
-            {t('nav_cta')}
-          </Link>
         </div>
       </div>
     </nav>

@@ -203,7 +203,7 @@ export default function VsPods() {
               : "Find the right specialty coffee subscription for your team."}
           </p>
           <div className="cta-band__actions">
-            <Link to="/subs" className="btn btn--yellow btn--lg">
+            <Link to="/subscriptions" className="btn btn--yellow btn--lg">
               {isEs ? 'Encuentra tu Sub' : 'Find Your Sub'}
             </Link>
           </div>

@@ -37,16 +37,30 @@ export const GRINDS = [
 const STORAGE_KEY = 'bc_cart_v1'
 const TYPES = ['sub', 'once']
 
-const itemKey = (i) => `${i.type}:${i.tierId}:${i.size}:${i.grind}`
+/**
+ * Two kinds of line:
+ *  - tier coffee:   { type: 'sub'|'once', tierId, size, grind, qty }
+ *  - Store product: { type: 'once', productId, grind (or ''), qty }
+ */
+const itemKey = (i) => i.productId
+  ? `once:p:${i.productId}:${i.grind || ''}`
+  : `${i.type}:${i.tierId}:${i.size}:${i.grind}`
+
+const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/
+const clampQty = (q) => Math.min(MAX_QTY, Math.max(1, Math.floor(Number(q)) || 1))
 
 function sanitize(raw) {
   if (!Array.isArray(raw)) return []
-  return raw
-    .filter(i => i && TYPES.includes(i.type) && i.tierId && i.size && GRINDS.some(g => g.id === i.grind))
-    .map(i => ({
-      type: i.type, tierId: String(i.tierId), size: String(i.size), grind: i.grind,
-      qty: Math.min(MAX_QTY, Math.max(1, Math.floor(Number(i.qty)) || 1)),
-    }))
+  return raw.map(i => {
+    if (!i || !TYPES.includes(i.type)) return null
+    if (i.productId) {
+      if (i.type !== 'once' || !SLUG_RE.test(String(i.productId))) return null
+      const grind = GRINDS.some(g => g.id === i.grind) ? i.grind : ''
+      return { type: 'once', productId: String(i.productId), grind, qty: clampQty(i.qty) }
+    }
+    if (!i.tierId || !i.size || !GRINDS.some(g => g.id === i.grind)) return null
+    return { type: i.type, tierId: String(i.tierId), size: String(i.size), grind: i.grind, qty: clampQty(i.qty) }
+  }).filter(Boolean)
 }
 
 // One order type per cart: keep only items matching the first item's type
@@ -126,15 +140,29 @@ export const useCart = () => {
 }
 
 /**
- * Joins cart items with live tier data → display lines + totals.
- * Items whose tier/size no longer exists are left out.
+ * Joins cart items with live tier + product data → display lines + totals.
+ * Each line gets name, image, href and detail for display. Items whose
+ * tier/size/product no longer exists (or is sold out) are left out.
  */
-export function priceCart(items, tiers) {
+export function priceCart(items, tiers, products = [], lang = 'en') {
   const lines = items.map(i => {
+    if (i.productId) {
+      const p = products.find(x => x.slug === i.productId)
+      if (!p || p.soldOut || !(p.price > 0)) return null
+      return {
+        ...i, key: itemKey(i), product: p, unitPrice: p.price, lineTotal: p.price * i.qty,
+        name: p.name[lang] || p.name.en, image: p.images?.[0] || '',
+        href: `/store/product/${p.slug}`, sizeLabel: p.size || '',
+      }
+    }
     const tier = tiers.find(t => t.id === i.tierId)
     const size = tier?.sizes.find(s => s.label === i.size)
     if (!tier || !size) return null
-    return { ...i, key: itemKey(i), tier, unitPrice: size.price, lineTotal: size.price * i.qty }
+    return {
+      ...i, key: itemKey(i), tier, unitPrice: size.price, lineTotal: size.price * i.qty,
+      name: tier.name, image: tier.thumb || tier.image,
+      href: i.type === 'sub' ? `/subscriptions/${tier.slug}` : `/store/coffee/${tier.slug}`, sizeLabel: i.size,
+    }
   }).filter(Boolean)
 
   const subsTotal = lines.filter(l => l.type === 'sub').reduce((s, l) => s + l.lineTotal, 0)

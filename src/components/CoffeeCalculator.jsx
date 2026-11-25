@@ -192,7 +192,7 @@ export default function CoffeeCalculator() {
             </div>
 
             <div className="calc-cta">
-              <Link to="/subs" className="btn btn--yellow btn--lg">
+              <Link to="/subscriptions#tiers" className="btn btn--yellow btn--lg">
                 {isEs ? 'Encuentra tu Sub' : 'Find Your Sub'}
               </Link>
             </div>

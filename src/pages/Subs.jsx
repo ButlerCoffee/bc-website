@@ -2,8 +2,9 @@ import { Link } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
 import { useTiers } from '../data/subsApi'
 import Layout from '../components/Layout'
+import CoffeeCalculator from '../components/CoffeeCalculator'
+import TierBuyCard from '../components/TierBuyCard'
 import './Subs.css'
-import { fmtEur } from '../data/format'
 
 export default function Subs() {
   const { lang, t } = useLang()
@@ -45,6 +46,24 @@ export default function Subs() {
         </div>
       </section>
 
+      {/* ── TIER CARDS ────────────────────────────────────────────────────── */}
+      <section className="section subs-tiers" id="tiers" style={{ scrollMarginTop: 'calc(var(--nav-h) + 8px)' }}>
+        <div className="wrap">
+          <div className="sh sh--center">
+            <span className="badge">{isEs ? 'Los Niveles' : 'The Tiers'}</span>
+            <h2 className="section-title">{isEs ? 'Encuentra el tuyo.' : 'Find yours.'}</h2>
+            <p className="section-sub">
+              {isEs ? 'Tú eliges el nivel; nosotros seleccionamos el café cada mes.' : 'You choose the tier. We handpick the coffee every month.'}
+            </p>
+          </div>
+
+          {/* Same card as Coffee by the bag, in subscription mode */}
+          <div className="pgrid pgrid--four">
+            {TIERS.map(tier => <TierBuyCard key={tier.id} tier={tier} lang={lang} mode="sub" />)}
+          </div>
+        </div>
+      </section>
+
       {/* ── HOW THE TIERS WORK ────────────────────────────────────────────── */}
       <div className="surf-section section">
         <div className="wrap">
@@ -79,53 +98,10 @@ export default function Subs() {
         </div>
       </div>
 
-      {/* ── TIER CARDS ────────────────────────────────────────────────────── */}
-      <section className="section">
-        <div className="wrap">
-          <div className="sh sh--center">
-            <span className="badge">{isEs ? 'Los Niveles' : 'The Tiers'}</span>
-            <h2 className="section-title">{isEs ? 'Encuentra el tuyo.' : 'Find yours.'}</h2>
-          </div>
-
-          <div className="subs-grid">
-            {TIERS.map(tier => (
-              <Link to={`/subs/${tier.slug}`} key={tier.id} className={`sub-card ${tier.featured ? 'sub-card--feat' : ''}`}>
-                {tier.featured && (
-                  <div className="sub-card__badge">
-                    {tier.popularLabel?.[lang] || 'Most Popular'}
-                  </div>
-                )}
-
-                <div className="sub-card__img-wrap">
-                  <img src={tier.thumb || tier.image} alt={tier.name} className="sub-card__img" decoding="async" />
-                </div>
-
-                <h2 className="sub-card__name">{tier.name}</h2>
-                <p className="sub-card__tagline">{tier.tagline}</p>
-
-                <div className="sub-card__pills">
-                  {tier.pills.map(p => <span key={p} className="tier__pill">{p}</span>)}
-                </div>
-
-                <p className="sub-card__desc">{tier.description[lang]}</p>
-
-                <div className="sub-card__taste">
-                  <span className="sub-card__taste-label">{isEs ? 'Composición' : 'Composition'}</span>
-                  <span>{tier.composition[lang]}</span>
-                </div>
-
-                <div className="sub-card__footer">
-                  <div className="sub-card__price">
-                    <span>{isEs ? 'desde' : 'from'}</span>
-                    {fmtEur(tier.price, lang)}<small>/{tier.unit}</small>
-                  </div>
-                  <span className="sub-card__cta">{isEs ? 'Ver detalles →' : 'View details →'}</span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ── CALCULATOR ────────────────────────────────────────────────────── */}
+      <div className="subs-calc" id="calculator">
+        <CoffeeCalculator />
+      </div>
 
       {/* ── CTA ───────────────────────────────────────────────────────────── */}
       <div className="cta-band surf-section">

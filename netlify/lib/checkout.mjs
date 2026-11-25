@@ -21,6 +21,10 @@ const GRINDS = ['whole', 'extra-coarse', 'coarse', 'medium-coarse', 'medium', 'm
 
 export const lookupKey = (tier, size, type) => `bc_${tier}_${size}_${type}`
 
+// Stripe tax categories for Store products priced from the Products sheet
+const TAX_CODE = { coffee: 'txcd_41050006', goods: 'txcd_99999999' }
+const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/
+
 let _stripe
 export function stripe() {
   const key = (process.env.STRIPE_SECRET_KEY || '').trim()
@@ -58,8 +62,15 @@ export function parseCart(body) {
   if (items.length > MAX_LINES) throw new HttpError(400, 'too_many_items')
   const clean = items.map(i => {
     const qty = Math.floor(Number(i?.qty))
+    if (!(qty >= 1 && qty <= MAX_QTY)) throw new HttpError(400, 'invalid_item')
+    if (i?.productId) {
+      // Store product: one-off only; grind checked against the product later
+      if (i.type !== 'once' || !SLUG_RE.test(String(i.productId)) || String(i.productId).length > 60 ||
+          (i.grind && !GRINDS.includes(i.grind))) throw new HttpError(400, 'invalid_item')
+      return { type: 'once', productId: String(i.productId), grind: i.grind || '', qty }
+    }
     if (!['sub', 'once'].includes(i?.type) || !TIERS.includes(i?.tierId) || !SIZES.includes(i?.size) ||
-        !GRINDS.includes(i?.grind) || !(qty >= 1 && qty <= MAX_QTY)) {
+        !GRINDS.includes(i?.grind)) {
       throw new HttpError(400, 'invalid_item')
     }
     return { type: i.type, tierId: i.tierId, size: i.size, grind: i.grind, qty }
@@ -80,16 +91,37 @@ async function fetchPrices(keys) {
   return found
 }
 
+/**
+ * Store products, read from the admin's Products sheet (public view: visible
+ * rows only, no cost). This is the price customers pay.
+ */
+async function fetchProducts() {
+  const api = (process.env.BUTLER_API_URL || process.env.VITE_BUTLER_API_URL || '').trim()
+  if (!api) throw new HttpError(500, 'not_configured')
+  const res = await fetch(`${api}?sheet=products`, { redirect: 'follow' })
+  const json = await res.json().catch(() => ({}))
+  if (!json.ok || !Array.isArray(json.data)) throw new HttpError(502, 'products_unavailable')
+  const map = new Map()
+  for (const p of json.data) {
+    if (p && SLUG_RE.test(String(p.slug || '')) && p.name && typeof p.name === 'object' && Number(p.price) > 0) map.set(p.slug, p)
+  }
+  return map
+}
+
 /** Builds the Checkout Session parameters for a validated cart. */
 export async function buildSessionParams({ type, items, lang }, origin) {
-  const keys = [...new Set(items.map(i => lookupKey(i.tierId, i.size, type)))]
+  const tierItems = items.filter(i => !i.productId)
+  const productItems = items.filter(i => i.productId)
+
+  const keys = [...new Set(tierItems.map(i => lookupKey(i.tierId, i.size, type)))]
   if (type === 'sub') keys.push(SUB_SHIPPING_KEY)
-  const prices = await fetchPrices(keys)
+  const prices = keys.length ? await fetchPrices(keys) : new Map()
+  const products = productItems.length ? await fetchProducts() : new Map()
 
   // Merge identical prices (same coffee+size with different grinds) into one line
   const lines = new Map()
   let subtotal = 0
-  for (const i of items) {
+  for (const i of tierItems) {
     const key = lookupKey(i.tierId, i.size, type)
     const price = prices.get(key)
     if (!price) throw new HttpError(409, 'unavailable')
@@ -97,10 +129,40 @@ export async function buildSessionParams({ type, items, lang }, origin) {
     subtotal += price.unit_amount * i.qty
   }
   const line_items = [...lines].map(([price, quantity]) => ({ price, quantity }))
+
+  // Store products: priced inline from the Products sheet (server side)
+  const productLines = new Map()
+  for (const i of productItems) {
+    const p = products.get(i.productId)
+    if (!p || p.soldOut === true || String(p.soldOut) === 'true') throw new HttpError(409, 'unavailable')
+    if (p.grind && !i.grind) throw new HttpError(400, 'invalid_item')
+    const cents = Math.round(Number(p.price) * 100)
+    const prev = productLines.get(p.slug)
+    productLines.set(p.slug, { p, cents, qty: (prev?.qty || 0) + i.qty })
+    subtotal += cents * i.qty
+  }
+  for (const { p, cents, qty } of productLines.values()) {
+    const name = (lang === 'es' && p.name.es) || p.name.en
+    line_items.push({
+      quantity: qty,
+      price_data: {
+        currency: 'eur',
+        unit_amount: cents,
+        tax_behavior: 'inclusive',
+        product_data: {
+          name: p.size ? `${name} | ${p.size}` : name,
+          tax_code: TAX_CODE[p.category] || TAX_CODE.goods,
+          metadata: { source: 'store_product', slug: p.slug, category: String(p.category || '') },
+        },
+      },
+    })
+  }
   const freeShipping = subtotal >= FREE_SHIPPING_FROM
 
   // Grind per bag lives in metadata (Stripe line items can't carry it)
-  const summary = items.map(i => `${i.tierId} ${i.size} x${i.qty} (${i.grind})`).join('; ').slice(0, 500)
+  const summary = items.map(i => i.productId
+    ? `${i.productId} x${i.qty}${i.grind ? ` (${i.grind})` : ''}`
+    : `${i.tierId} ${i.size} x${i.qty} (${i.grind})`).join('; ').slice(0, 500)
   const metadata = { source: 'website_cart', order_type: type, items: summary, lang }
 
   const params = {

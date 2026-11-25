@@ -171,10 +171,13 @@
   .nav__right .nav__cta { display: none; }
 }
 
-@media (min-width: 780px) {
-  .nav__links               { display: flex; }
+/* Full menu from 940px (6 items); below that the menu button + drawer */
+@media (min-width: 940px) {
+  .nav__links               { display: flex; margin: 0 auto; padding: 0 16px; }
   .nav__burger              { display: none; }
   .nav__cta                 { display: inline-flex; }
   .nav__right .lang-toggle  { display: flex; }
   .nav__drawer              { display: none !important; }
+  /* logo and right cluster take only what they need; the menu sits between */
+  .nav__logo, .nav__right   { flex: 0 0 auto; }
 }

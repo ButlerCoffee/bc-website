@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { Link, useParams, Navigate, useSearchParams, useLocation } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useParams, Navigate, useSearchParams } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
 import { useTiers, getTierBySlug } from '../data/subsApi'
 import { renderMarkdown } from '../data/blogApi'
@@ -8,7 +8,12 @@ import './SubTier.css'
 import { fmtEur } from '../data/format'
 import { useCart, CART_ENABLED, GRINDS, MAX_QTY, FREE_SHIPPING_FROM } from '../context/CartContext'
 
-export default function SubTier() {
+/**
+ * Coffee tier page. fixedMode:
+ *  'sub'  → /subscriptions/:tier  (subscribe only)
+ *  'once' → /store/coffee/:tier   (one-off only, with the Store sub-menu)
+ */
+export default function SubTier({ fixedMode }) {
   const { tier: slug } = useParams()
   const { lang, t } = useLang()
   const { tiers, loading } = useTiers()
@@ -16,31 +21,30 @@ export default function SubTier() {
   const isEs = lang === 'es'
 
   const [params] = useSearchParams()
-  const { hash } = useLocation()
+
   // ?size=…&type=sub|once (from the home page cards) pre-select the buy card
-  const [size, setSize] = useState(() => {
+  const [chosenSize, setSize] = useState(() => {
     const wanted = params.get('size')
     return tier?.sizes?.some(s => s.label === wanted) ? wanted : (tier?.sizes?.[0]?.label || '')
   })
   const cart = useCart()
-  const [mode, setMode] = useState(() => {
+  const [chosenMode, setMode] = useState(() => {
+    if (fixedMode) return fixedMode
     const wanted = params.get('type')
     return ['sub', 'once'].includes(wanted) ? wanted : (cart.cartType || 'sub')
   })   // 'sub' | 'once'
+  const mode = fixedMode || chosenMode
   const [grind, setGrind] = useState('whole')
   const [qty, setQty] = useState(1)
   const conflict = cart.cartType && cart.cartType !== mode
 
-  useEffect(() => {
-    if (hash !== '#buy') return
-    // Wait a moment for images/layout to settle, then jump to the buy card
-    const t = setTimeout(() => document.getElementById('buy')?.scrollIntoView({ block: 'start' }), 250)
-    return () => clearTimeout(t)
-  }, [hash, slug])
 
   // While loading don't flash-redirect; once loaded redirect if slug unknown
   if (loading && !tier) return null
-  if (!tier) return <Navigate to="/subs" replace />
+  const base = fixedMode === 'once' ? '/store/coffee' : '/subscriptions'
+  if (!tier) return <Navigate to={base} replace />
+  // Size must exist for this tier (e.g. Summit is 200g only)
+  const size = tier.sizes.some(s => s.label === chosenSize) ? chosenSize : (tier.sizes[0]?.label || '')
 
   const currentSize = tier.sizes.find(s => s.label === size) || tier.sizes[0]
   const stripeLink  = tier.stripeLinks?.[size] || '#'
@@ -56,7 +60,9 @@ export default function SubTier() {
       <section className={`tier-hero ${tier.featured ? 'tier-hero--feat' : ''}`}>
         <div className="wrap">
           <div className="page-hero__eyebrow">
-            <Link to="/subs" className="page-hero__back">{t('back_subs')}</Link>
+            <Link to={base} className="page-hero__back">
+              {fixedMode === 'once' ? (isEs ? '← Todo el café' : '← All coffee') : t('back_subs')}
+            </Link>
           </div>
 
           <div className="tier-hero__layout">
@@ -118,8 +124,8 @@ export default function SubTier() {
 
                 {CART_ENABLED ? (
                   <>
-                    {/* Purchase type */}
-                    <div className="buy-mode" role="radiogroup" aria-label={isEs ? 'Tipo de compra' : 'Purchase type'}>
+                    {/* Purchase type (hidden when the page is fixed to one mode) */}
+                    {!fixedMode && <div className="buy-mode" role="radiogroup" aria-label={isEs ? 'Tipo de compra' : 'Purchase type'}>
                       {[
                         { id: 'sub',  label: isEs ? 'Suscripción' : 'Subscribe', hint: isEs ? 'cada mes' : 'every month' },
                         { id: 'once', label: isEs ? 'Compra única' : 'One-off',  hint: isEs ? 'sin suscripción' : 'no subscription' },
@@ -133,7 +139,7 @@ export default function SubTier() {
                           <span className="buy-mode__hint">{m.hint}</span>
                         </button>
                       ))}
-                    </div>
+                    </div>}
 
                     {/* Grind + quantity */}
                     <div className="buy-opts">
@@ -250,8 +256,8 @@ export default function SubTier() {
         </div>
       </section>
 
-      {/* ── WHAT'S INCLUDED ─────────────────────────────────────────────── */}
-      <section className="section surf-section">
+      {/* ── WHAT'S INCLUDED (subscriptions) ─────────────────────────────── */}
+      {mode === 'sub' && <section className="section surf-section">
         <div className="wrap">
           <div className="sh sh--center">
             <span className="badge">{isEs ? 'Qué incluye' : "What's included"}</span>
@@ -279,7 +285,7 @@ export default function SubTier() {
             ))}
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* ── OTHER TIERS ─────────────────────────────────────────────────── */}
       <section className="section">
@@ -292,7 +298,7 @@ export default function SubTier() {
           </div>
           <div className="tier-nav-grid">
             {tiers.filter(t => t.id !== tier.id).map(other => (
-              <Link key={other.id} to={`/subs/${other.slug}`} className="tier-nav-card">
+              <Link key={other.id} to={`${base}/${other.slug}`} className="tier-nav-card">
                 <div className="tier-nav-card__oval">
                   <img src={other.thumb || other.image} alt={other.name} className="tier-nav-card__duck" loading="lazy" decoding="async" />
                 </div>

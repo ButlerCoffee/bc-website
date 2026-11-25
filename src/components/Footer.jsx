@@ -12,8 +12,9 @@ export default function Footer() {
   const year = new Date().getFullYear()
 
   const productLinks = [
-    { to: '/subs',     label: t('nav_coffee') },
-    { to: '/machines', label: t('nav_machines') },
+    { to: '/store/coffee',   label: t('nav_coffee') },
+    { to: '/subscriptions',  label: t('nav_subscriptions') },
+    { to: '/store/machines', label: t('nav_machines') },
     { to: '/vs-pods',  label: t('nav_vs_pods') },
     { to: '/blog',     label: t('nav_blog') },
     { to: '/portal',   label: t('nav_portal') },
@@ -22,6 +23,7 @@ export default function Footer() {
   const settings = useSettings()
   const { pages: legalPages } = useLegalPages()
   const companyLinks = [
+    { to: '/about',   label: t('nav_about') },
     { to: '/contact', label: t('nav_contact') },
     { href: '/#faq',  label: 'FAQ' },
     { href: `mailto:${settings.contactEmail}`, label: settings.contactEmail },

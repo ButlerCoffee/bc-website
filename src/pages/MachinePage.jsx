@@ -4,6 +4,7 @@ import { useLang } from '../context/LangContext'
 import { useMachines, getMachineBySlug, getMachinesByBrand } from '../data/machinesApi'
 import { renderMarkdown } from '../data/blogApi'
 import Layout from '../components/Layout'
+import QuoteModal from '../components/QuoteModal'
 import './MachinePage.css'
 import { fmtEur } from '../data/format'
 
@@ -15,13 +16,14 @@ export default function MachinePage() {
 
   const machine = getMachineBySlug(machines, slug)
   const [activeImg, setActiveImg] = useState(0)
+  const [quoteOpen, setQuoteOpen] = useState(false)
 
   // Reset the selected gallery image whenever the machine changes.
   useEffect(() => { setActiveImg(0) }, [machine?.id])
 
   // While loading, show nothing (avoids flash redirect on first render)
   if (loading && !machine) return null
-  if (!machine) return <Navigate to="/machines" replace />
+  if (!machine) return <Navigate to="/store/machines" replace />
 
   const related = getMachinesByBrand(machines, machine.brand).filter(m => m.id !== machine.id)
   const gallery = machine.images || []
@@ -35,7 +37,7 @@ export default function MachinePage() {
       <section className="machine-hero">
         <div className="wrap">
           <div className="page-hero__eyebrow">
-            <Link to="/machines" className="page-hero__back">{t('back_machines')}</Link>
+            <Link to="/store/machines" className="page-hero__back">{t('back_machines')}</Link>
             {tagText && <span className="badge">{tagText}</span>}
           </div>
 
@@ -85,8 +87,7 @@ export default function MachinePage() {
                   <span className="machine-hero__price-num">{fmtEur(machine.price, lang)}</span>
                 </div>
                 <div className="machine-hero__actions">
-                  <Link to="/contact" className="btn btn--yellow">{t('request_quote')}</Link>
-                  <Link to="/subs" className="btn btn--ghost">{isEs ? 'Ver suscripciones' : 'See subscriptions'}</Link>
+                  <button className="btn btn--yellow" onClick={() => setQuoteOpen(true)}>{t('request_quote')}</button>
                 </div>
                 {(machine.sheetLink?.[lang] || machine.sheetLink?.en) && (
                   <a
@@ -165,8 +166,7 @@ export default function MachinePage() {
               : 'Pair your machine with a Butler subscription and get beans dialled specifically for it, every month.'}
           </p>
           <div className="cta-band__actions">
-            <Link to="/contact" className="btn btn--yellow">{t('request_quote')}</Link>
-            <Link to="/subs"    className="btn btn--ghost">{isEs ? 'Ver niveles →' : 'Explore tiers →'}</Link>
+            <button className="btn btn--yellow" onClick={() => setQuoteOpen(true)}>{t('request_quote')}</button>
           </div>
         </div>
       </div>
@@ -181,7 +181,7 @@ export default function MachinePage() {
             </div>
             <div className="related-grid">
               {related.map(m => (
-                <Link key={m.id} to={`/machines/${m.slug}`} className="related-card">
+                <Link key={m.id} to={`/store/machines/${m.slug}`} className="related-card">
                   <div className="related-card__img">
                     {m.images?.[0]
                       ? <img src={m.images[0]} alt={m.name} loading="lazy" />
@@ -203,6 +203,7 @@ export default function MachinePage() {
         </section>
       )}
 
+      <QuoteModal open={quoteOpen} onClose={() => setQuoteOpen(false)} machineName={`${machine.brandName} ${machine.name}`} />
     </Layout>
   )
 }

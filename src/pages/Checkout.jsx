@@ -8,6 +8,8 @@ import Layout from '../components/Layout'
 import { useLang } from '../context/LangContext'
 import { useCart, GRINDS } from '../context/CartContext'
 import { useTiers } from '../data/subsApi'
+import { useProducts } from '../data/productsApi'
+import { priceCart } from '../context/CartContext'
 import './Checkout.css'
 
 const PK = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
@@ -43,7 +45,7 @@ const FONTS = [{ cssSrc: 'https://fonts.googleapis.com/css2?family=Inter:wght@40
 
 const TXT = {
   en: {
-    title: 'Checkout', back: '← Back to coffee', contact: 'Contact', email: 'Email',
+    title: 'Checkout', back: '← Back to the store', contact: 'Contact', email: 'Email',
     shipping: 'Shipping address', payment: 'Payment', summary: 'Your order',
     sub: 'Subscription', once: 'One-off order',
     subtotal: 'Subtotal', ship: 'Shipping', free: 'Free', discount: 'Discount', tax: 'incl. VAT',
@@ -63,7 +65,7 @@ const TXT = {
     loading: 'Loading secure checkout…',
   },
   es: {
-    title: 'Pago', back: '← Volver a los cafés', contact: 'Contacto', email: 'Email',
+    title: 'Pago', back: '← Volver a la tienda', contact: 'Contacto', email: 'Email',
     shipping: 'Dirección de envío', payment: 'Pago', summary: 'Tu pedido',
     sub: 'Suscripción', once: 'Compra única',
     subtotal: 'Subtotal', ship: 'Envío', free: 'Gratis', discount: 'Descuento', tax: 'IVA incluido',
@@ -110,7 +112,7 @@ export default function Checkout() {
   const { items } = useCart()
 
   const cartItems = useMemo(
-    () => items.map(({ type, tierId, size, grind, qty }) => ({ type, tierId, size, grind, qty })),
+    () => items.map(({ type, tierId, size, productId, grind, qty }) => (productId ? { type, productId, grind, qty } : { type, tierId, size, grind, qty })),
     [items]
   )
   const [startError, setStartError] = useState('')
@@ -126,7 +128,7 @@ export default function Checkout() {
     body = (
       <div className="co-empty">
         <p>{tx.empty}</p>
-        <Link to="/subs" className="btn btn--yellow">{tx.browse}</Link>
+        <Link to="/store/coffee" className="btn btn--yellow">{tx.browse}</Link>
       </div>
     )
   } else if (!stripePromise) {
@@ -135,7 +137,7 @@ export default function Checkout() {
     body = (
       <div className="co-empty">
         <p className="co-alert">{tx.errors[startError] || tx.errors.default}</p>
-        <Link to="/subs" className="btn btn--ghost">{tx.back}</Link>
+        <Link to="/store/coffee" className="btn btn--ghost">{tx.back}</Link>
       </div>
     )
   } else {
@@ -159,7 +161,7 @@ export default function Checkout() {
       <section className="co">
         <div className="wrap">
           <div className="page-hero__eyebrow">
-            <Link to="/subs" className="page-hero__back">{tx.back}</Link>
+            <Link to="/store/coffee" className="page-hero__back">{tx.back}</Link>
           </div>
           <Link to="/" className="co__brand" aria-label="Butler Coffee">
             <img src="/BC_outlineLogo.svg" alt="" />
@@ -180,6 +182,8 @@ export default function Checkout() {
 function CheckoutForm({ tx, lang, cartItems }) {
   const state = useCheckoutElements()
   const { tiers } = useTiers()
+  const { products } = useProducts()
+  const { lines: summaryLines } = priceCart(cartItems, tiers, products, lang)
   const [email, setEmail] = useState('')
   const [promo, setPromo] = useState('')
   const [promoMsg, setPromoMsg] = useState('')
@@ -273,20 +277,16 @@ function CheckoutForm({ tx, lang, cartItems }) {
           </div>
 
           <ul className="co-sum__lines">
-            {cartItems.map((i, n) => {
-              const tier = tiers.find(t => t.id === i.tierId)
-              const unit = tier?.sizes.find(sz => sz.label === i.size)?.price
-              return (
-                <li key={n} className="co-sum__line">
-                  <div className="co-sum__img">{tier && <img src={tier.thumb || tier.image} alt="" />}<span>{i.qty}</span></div>
-                  <div className="co-sum__text">
-                    <strong>{tier?.name || i.tierId}</strong>
-                    <span>{i.size} · {grindLabel(i.grind)}</span>
-                  </div>
-                  {unit != null && <span className="co-sum__price">{fmt(unit * i.qty * 100)}</span>}
-                </li>
-              )
-            })}
+            {summaryLines.map(l => (
+              <li key={l.key} className="co-sum__line">
+                <div className="co-sum__img">{l.image && <img src={l.image} alt="" />}<span>{l.qty}</span></div>
+                <div className="co-sum__text">
+                  <strong>{l.name}</strong>
+                  <span>{[l.sizeLabel, l.grind && grindLabel(l.grind)].filter(Boolean).join(' · ')}</span>
+                </div>
+                <span className="co-sum__price">{fmt(l.lineTotal * 100)}</span>
+              </li>
+            ))}
           </ul>
 
           <form className="co-promo" onSubmit={applyPromo}>

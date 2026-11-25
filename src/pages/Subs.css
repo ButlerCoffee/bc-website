@@ -194,3 +194,7 @@
   font-weight: 700;
   color: var(--yellow);
 }
+
+/* Tier cards sit straight under the intro */
+.subs-tiers { padding-top: 8px; }
+.subs-tiers .sh { margin-bottom: 32px; }

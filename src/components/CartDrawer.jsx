@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
 import { useCart, priceCart, GRINDS, MAX_QTY, FREE_SHIPPING_FROM } from '../context/CartContext'
 import { useTiers } from '../data/subsApi'
+import { useProducts } from '../data/productsApi'
 import { fmtEur } from '../data/format'
 import './CartDrawer.css'
 
@@ -36,7 +37,8 @@ export default function CartDrawer() {
   const tx = TXT[lang] || TXT.en
   const { items, cartType, isOpen, close, setQty, remove, lastAdded } = useCart()
   const { tiers } = useTiers()
-  const { lines, subsTotal, onceTotal, firstDelivery, shipping, total } = priceCart(items, tiers)
+  const { products } = useProducts()
+  const { lines, subsTotal, onceTotal, firstDelivery, shipping, total } = priceCart(items, tiers, products, lang)
   const navigate = useNavigate()
   const panelRef = useRef(null)
 
@@ -79,7 +81,7 @@ export default function CartDrawer() {
           <div className="cart__empty">
             <img src="/BC_outlineLogo.svg" alt="" className="cart__empty-logo" />
             <p>{tx.empty}</p>
-            <Link to="/subs" className="btn btn--yellow btn--sm" onClick={close}>{tx.browse}</Link>
+            <Link to="/store/coffee" className="btn btn--yellow btn--sm" onClick={close}>{tx.browse}</Link>
           </div>
         ) : (
           <>
@@ -93,17 +95,17 @@ export default function CartDrawer() {
             <ul className="cart__lines">
               {lines.map(l => (
                 <li key={l.key} className={`cart-line ${l.key === lastAdded ? 'cart-line--new' : ''}`}>
-                  <Link to={`/subs/${l.tier.slug}`} className="cart-line__img" onClick={close}>
-                    <img src={l.tier.thumb || l.tier.image} alt="" />
+                  <Link to={l.href} className="cart-line__img" onClick={close}>
+                    {l.image && <img src={l.image} alt="" />}
                   </Link>
                   <div className="cart-line__body">
                     <div className="cart-line__top">
-                      <span className="cart-line__name">{l.tier.name}</span>
+                      <span className="cart-line__name">{l.name}</span>
                       <span className={`cart-line__type cart-line__type--${l.type}`}>
                         {l.type === 'sub' ? tx.monthly : tx.once}
                       </span>
                     </div>
-                    <div className="cart-line__meta">{l.size} · {grindLabel(l.grind)}</div>
+                    <div className="cart-line__meta">{[l.sizeLabel, l.grind && grindLabel(l.grind)].filter(Boolean).join(' · ')}</div>
                     <div className="cart-line__bottom">
                       <div className="qty" role="group" aria-label={tx.qty}>
                         <button onClick={() => setQty(l.key, l.qty - 1)} aria-label={tx.less}>−</button>

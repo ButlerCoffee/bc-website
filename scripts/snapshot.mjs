@@ -50,6 +50,17 @@ async function fetchLegal(url) {
   } catch { return [] }
 }
 
+// Store products (special coffees, goods). Only rows shaped like products are
+// kept — an older backend answers ?sheet=products with the coffee list.
+async function fetchProducts(url) {
+  try {
+    const res = await fetch(`${url}?sheet=products`, { redirect: 'follow' })
+    const json = await res.json()
+    if (!json.ok || !Array.isArray(json.data)) return []
+    return clean(json.data.filter(p => p && p.slug && p.name && typeof p.name === 'object' && Number(p.price) > 0))
+  } catch { return [] }
+}
+
 async function fetchSettings(url) {
   try {
     const res = await fetch(`${url}?sheet=settings`, { redirect: 'follow' })
@@ -65,14 +76,15 @@ if (!url) {
 }
 
 try {
-  const [machines, subs, settings, legal] = await Promise.all([
+  const [machines, subs, settings, legal, products] = await Promise.all([
     fetchSheet(url, 'machines'),
     fetchSheet(url, 'subs'),
     fetchSettings(url),
     fetchLegal(url),
+    fetchProducts(url),
   ])
-  writeFileSync(OUT, JSON.stringify({ fetchedAt: new Date().toISOString(), machines, subs, settings, legal }, null, 1) + '\n')
-  console.log(`[snapshot] Saved ${machines.length} machines, ${subs.length} subs.`)
+  writeFileSync(OUT, JSON.stringify({ fetchedAt: new Date().toISOString(), machines, subs, settings, legal, products }, null, 1) + '\n')
+  console.log(`[snapshot] Saved ${machines.length} machines, ${subs.length} subs, ${products.length} products.`)
 } catch (err) {
   console.warn(`[snapshot] Fetch failed (${err.message}) — keeping existing snapshot.`)
 }

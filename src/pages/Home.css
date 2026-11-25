@@ -538,3 +538,67 @@
   color: var(--white);
   white-space: nowrap;
 }
+
+/* ─── Hero: emphasised "Specialty Coffee"; subscription CTA dominant ─────── */
+.hero__headline em { font-style: normal; color: var(--yellow); }
+.hero__headline { font-size: clamp(2.6rem, 7.5vw, 4.8rem); }
+.hero__cta-main { box-shadow: 0 10px 34px rgba(255,229,0,0.22); }
+.hero__actions .btn--ghost { padding-left: 22px; padding-right: 22px; }
+
+/* ─── Homepage tiers: compact grid right under the hero ──────────────────── */
+.home-tiers { padding-top: 56px; }
+.home-tiers .sh { margin-bottom: 32px; }
+.home-tiers__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (min-width: 900px) { .home-tiers__grid { grid-template-columns: repeat(4, 1fr); gap: 16px; } }
+
+.tier--compact { width: auto; padding: 22px 14px 16px; text-align: center; align-items: center; }
+.tier--compact .tier__oval { width: 84px; height: 96px; margin-bottom: 12px; }
+.tier--compact .tier__name { font-size: 1.1rem; }
+.tier--compact .tier__flavor { margin: 6px 0 10px; color: var(--yellow); border-color: var(--yellow-30); background: var(--yellow-dim); }
+.tier--compact .tier__tag { margin-bottom: 12px; flex: 1; }
+.tier--compact .tier__price { justify-content: center; margin-bottom: 12px; }
+.tier--compact .tier__amt { font-size: 1.6rem; }
+.tier--compact .tier__cta { padding: 10px 8px; font-size: 0.7rem; }
+@media (min-width: 900px) {
+  .tier--compact { padding: 26px 18px 18px; }
+  .tier--compact .tier__oval { width: 110px; height: 126px; }
+  .tier--compact .tier__name { font-size: 1.3rem; }
+}
+
+/* ─── One-time bag callout ───────────────────────────────────────────────── */
+.bag-callout { padding: 0 0 72px; }
+.bag-callout__box {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: flex-start;
+  padding: 28px 24px;
+  border: 1px dashed var(--yellow-30);
+  border-radius: var(--r-lg);
+  background: var(--yellow-dim);
+}
+@media (min-width: 760px) {
+  .bag-callout__box { flex-direction: row; align-items: center; justify-content: space-between; padding: 32px 36px; }
+}
+.bag-callout__title { font-family: var(--font-head); font-weight: 900; font-size: clamp(1.4rem, 3vw, 1.8rem); letter-spacing: -0.02em; margin-bottom: 6px; }
+.bag-callout__text { color: var(--muted); max-width: 560px; line-height: 1.6; }
+
+/* Hero sized to its content so the tiers start right after the first screen */
+@media (min-width: 860px) {
+  .hero { min-height: 0; padding-top: calc(var(--nav-h) + 40px); padding-bottom: 40px; }
+  .hero__img { max-height: 520px; width: auto; max-width: 100%; object-fit: contain; }
+}
+/* Phones: smaller image so the tiers are one scroll away */
+@media (max-width: 859px) {
+  .hero { padding-bottom: 24px; gap: 28px; }
+  .hero__img { width: 100%; max-width: 320px; max-height: 340px; object-fit: cover; }
+}
+/* Grid items may shrink below their content (keeps the headline inside the screen) */
+.hero > * { min-width: 0; }
+.section.home-tiers { padding-top: 40px; }
+.hero__text { position: relative; z-index: 1; }
+@media (max-width: 480px) { .hero__headline { font-size: 2.4rem; } }

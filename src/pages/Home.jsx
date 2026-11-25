@@ -4,7 +4,6 @@ import { useLang } from '../context/LangContext'
 import { useTiers } from '../data/subsApi'
 import { useMachines } from '../data/machinesApi'
 import { fmtEur } from '../data/format'
-import { CART_ENABLED } from '../context/CartContext'
 import { getFaqs } from '../data/faqApi'
 import { useFeaturedPosts, formatDate, normalizeDriveUrl } from '../data/blogApi'
 import Layout from '../components/Layout'
@@ -35,106 +34,50 @@ function renderMarkdown(md) {
 const HERO_IMG    = '/images/hero-bag.jpg'
 const PRINTS_URL  = '/images/footprints.png'
 
+/** Compact homepage tier card: flavour, short description, starting monthly price, link. */
 function TierCard({ tier, lang }) {
-  const [size, setSize] = useState(tier.sizes[0].label)
-  const currentSize = tier.sizes.find(s => s.label === size) || tier.sizes[0]
-  const stripeLink = tier.stripeLinks[size] || '#'
-  const onceLink   = tier.oneOffLinks?.[size]
-
+  const isEs = lang === 'es'
+  const from = Math.min(...tier.sizes.map(s => s.price))
   return (
-    <div className={`tier ${tier.featured ? 'tier--feat' : ''}`}>
+    <Link to={`/subscriptions/${tier.slug}`} className={`tier tier--compact ${tier.featured ? 'tier--feat' : ''}`}>
       {tier.featured && (
         <div className="tier__pop">{tier.popularLabel?.[lang] || 'Most Popular'}</div>
       )}
-
       <div className="tier__oval">
-        <img src={tier.thumb || tier.image} alt={tier.name} className="tier__duck" loading="lazy" decoding="async" />
+        <img src={tier.thumb || tier.image} alt="" className="tier__duck" loading="lazy" decoding="async" />
       </div>
-
       <h3 className="tier__name">{tier.name}</h3>
-
-      <div className="tier__tagline">
-        {tier.pills.map(p => <span key={p} className="tier__pill">{p}</span>)}
-      </div>
-
+      {tier.flavor?.[lang] && <span className="tier__pill tier__flavor">{tier.flavor[lang]}</span>}
       <p className="tier__tag">{tier.description[lang]}</p>
-
       <div className="tier__price">
-        <span className="tier__from">{lang === 'es' ? 'desde' : 'from'}</span>
-        <span className="tier__amt">{fmtEur(currentSize.price, lang)}</span>
-        <span className="tier__per">{lang === 'es' ? '/ mes' : '/ mo.'}</span>
+        <span className="tier__from">{isEs ? 'desde' : 'from'}</span>
+        <span className="tier__amt">{fmtEur(from, lang)}</span>
+        <span className="tier__per">{isEs ? '/ mes' : '/ mo.'}</span>
       </div>
-      <p className="tier__note">{lang === 'es' ? `por bolsa de ${size}` : `per ${size} bag`}</p>
-
-      <div className="tier__rule" />
-
-      <ul className="tier__feats">
-        {tier.features[lang].map(f => <li key={f}>{f}</li>)}
-      </ul>
-
-      <div className="tier__size-lbl">{lang === 'es' ? 'Elige el tamaño' : 'Select size'}</div>
-      <div className="tier__sizes">
-        {tier.sizes.map(s => (
-          <button
-            key={s.label}
-            className={`sz ${size === s.label ? 'on' : ''}`}
-            onClick={() => setSize(s.label)}
-          >
-            {s.label}
-          </button>
-        ))}
-      </div>
-
-      <div className="tier__actions">
-        {CART_ENABLED ? (
-          <>
-            {/* Go to the coffee's page with type + size pre-selected (grind is chosen there) */}
-            <Link to={`/subs/${tier.slug}?type=sub&size=${encodeURIComponent(size)}#buy`} className="tier__cta">
-              {lang === 'es' ? 'Suscribirme' : 'Subscribe'}
-            </Link>
-            <Link to={`/subs/${tier.slug}?type=once&size=${encodeURIComponent(size)}#buy`} className="tier__once">
-              {lang === 'es' ? 'Comprar' : 'Buy'}
-            </Link>
-          </>
-        ) : (
-          <>
-            <a href={stripeLink} className="tier__cta">
-              {lang === 'es' ? 'Suscribirme' : 'Subscribe'}
-            </a>
-            {onceLink && (
-              <a href={onceLink} className="tier__once">
-                {lang === 'es' ? 'Comprar' : 'Buy'}
-              </a>
-            )}
-          </>
-        )}
-        <Link to={`/subs/${tier.slug}`} className="tier__detail-link">
-          {lang === 'es' ? 'Ver detalles' : 'Learn more'}
-        </Link>
-      </div>
-    </div>
+      <span className="tier__cta">{isEs ? 'Ver' : 'See'} {tier.name.replace(/ Coffee$/, '')} →</span>
+    </Link>
   )
 }
 
 // ── Hardcoded fallback FAQ (used when the API sheet isn't available yet) ───────
 const FALLBACK_FAQS_ES = [
-  { q: '¿Cómo funcionan las suscripciones?', a: 'Nuestras suscripciones son simples y flexibles. Una vez que completes el formulario, te recomendaremos un plan. Al inicio de cada mes, recibirás café de especialidad fresco adaptado a tus preferencias de sabor y preparación. Puedes cambiar o cancelar en cualquier momento.' },
-  { q: '¿Qué café recibiré cada mes?', a: 'Cada mes recibirás un café diferente — nunca el mismo dos meses seguidos. Cada selección se cuida según tu nivel y perfil de sabor.' },
+  { q: '¿Cómo funcionan las suscripciones?', a: 'Elige tu nivel (Base, Explorer, Alpine o Summit), el tamaño de bolsa y la molienda. Cada mes seleccionamos a mano un café de especialidad para tu nivel y te lo enviamos recién tostado. Puedes cambiar o cancelar en cualquier momento.' },
+  { q: '¿Qué café recibiré cada mes?', a: 'Cada mes recibirás un café diferente — nunca el mismo dos meses seguidos. Lo seleccionamos a mano para tu nivel.' },
   { q: '¿Puedo recibir el mismo café cada mes?', a: '¡Haremos todo lo posible! Mientras haya stock, lo gestionamos. Escríbenos un email y lo resolvemos.' },
   { q: '¿A dónde enviáis?', a: 'Enviamos desde Madrid a toda la España peninsular, Portugal y Andorra.' },
   { q: '¿Cuánto cuesta el envío?', a: 'El envío es gratuito en pedidos de 30€ o más. En caso contrario, se aplica un pequeño coste de 5€.' },
   { q: '¿Cómo puedo cambiar o cancelar mi suscripción?', a: 'Puedes cambiar o cancelar tu suscripción en cualquier momento desde el <a href="/portal" style="color:var(--yellow)">Portal</a>. Sin llamadas, sin complicaciones.' },
-  { q: '¿Ofrecéis compras puntuales?', a: '¡Sí! Echa un vistazo al <strong>Passport: Ranger 3-Pack</strong> — un trío de cafés seleccionados para explorar la gama Butler antes de suscribirte.' },
+  { q: '¿Ofrecéis compras puntuales?', a: '¡Sí! Elige cualquier nivel en <a href="/store/coffee" style="color:var(--yellow)">Café por bolsa</a> y te seleccionamos una bolsa, sin suscripción.' },
 ]
 
 const FALLBACK_FAQS_EN = [
-  { q: 'How do subscriptions work?', a: 'Our subscriptions are simple and flexible. Once you complete our form, we\'ll recommend a plan. At the start of each month, you\'ll receive fresh specialty coffee tailored to your taste and brew preferences. Change or cancel anytime.' },
-  { q: 'What coffee will I get each month?', a: 'Every month you\'ll receive a different coffee — never the same one two months in a row. We curate each selection based on your tier and taste profile.' },
+  { q: 'How do subscriptions work?', a: 'Choose your tier (Base, Explorer, Alpine or Summit), bag size and grind. Each month we handpick a specialty coffee for your tier and ship it freshly roasted. Change or cancel anytime.' },
+  { q: 'What coffee will I get each month?', a: 'Every month you\'ll receive a different coffee — never the same one two months in a row. We handpick each selection for your tier.' },
   { q: 'Can I get the same coffee each month?', a: 'We\'ll do our best! As long as there is supply, we can make it happen. Just drop us an email and we\'ll sort it out.' },
   { q: 'Where do you ship to?', a: 'We ship from our base in Madrid to mainland Spain, Portugal and Andorra.' },
   { q: 'How much is shipping?', a: 'Shipping is free on all orders of €30 or more. Otherwise, a flat fee of €5 applies.' },
   { q: 'How can I change or cancel my subscription?', a: 'You can change or cancel your subscription anytime through your <a href="/portal" style="color:var(--yellow)">Portal</a>. No calls, no hassle.' },
-  { q: 'Do you offer one-time purchases?', a: 'Yes! Check out our <strong>Passport: Ranger 3-Pack</strong> — a curated trio of coffees to explore the Butler range before committing to a subscription.' },
+  { q: 'Do you offer one-time purchases?', a: 'Yes! Pick any tier in <a href="/store/coffee" style="color:var(--yellow)">Coffee by the bag</a> and we\'ll handpick a bag for you, no subscription required.' },
 ]
 
 function FaqItem({ q, a }) {
@@ -191,24 +134,23 @@ export default function Home() {
         <div className="hero">
           <div className="hero__text">
             <span className="badge hero__badge">
-              {isEs ? 'Entrega de Café' : 'Coffee Delivery'}
+              {isEs ? 'Café de pato madre.' : 'Ducking good coffee.'}
             </span>
             <h1 className="hero__headline">
-              {isEs ? 'Impulsa tu\nespacio.' : 'Fuel your\nworkspace.'}
+              {isEs ? 'Impulsa tu espacio.' : 'Fuel your space.'}
             </h1>
             <p className="hero__sub">
               {isEs
-                ? <>Butler entrega suscripciones de café de especialidad a tu medida, <strong>cada mes</strong>. Fresco, consistente y sin complicaciones.</>
-                : <>Butler delivers tailor-made specialty coffee subscriptions to your workspace <strong>every month</strong>. Fresh, consistent, no-hassle.</>
-              }
+                ? 'Elige tu nivel y cuánto café quieres. Te lo llevamos a casa o a la oficina a principios de cada mes.'
+                : 'Choose your level and how much coffee you’d like. We’ll deliver it to your home or office at the start of each month.'}
             </p>
             <div className="hero__actions">
-              <Link to="/subs" className="btn btn--yellow btn--lg">
-                {isEs ? 'Encuentra tu Sub' : 'Find Your Sub'}
+              <Link to="/subscriptions" className="btn btn--yellow btn--lg hero__cta-main">
+                {isEs ? 'Ver suscripciones' : 'Explore Subscriptions'}
               </Link>
-              <a href="#how" className="btn btn--ghost btn--lg">
-                {isEs ? 'Cómo Funciona' : 'How It Works'}
-              </a>
+              <Link to="/store/coffee" className="btn btn--ghost btn--lg">
+                {isEs ? 'Tienda' : 'Shop'}
+              </Link>
             </div>
           </div>
 
@@ -224,81 +166,43 @@ export default function Home() {
       </section>
 
 
-      {/* ── HOW IT WORKS ───────────────────────────────────────────────────── */}
-      <section className="section" id="how">
-        <div className="wrap">
-          <div className="sh sh--center">
-            <span className="badge">{isEs ? 'Cómo Funciona' : 'How It Works'}</span>
-            <h2 className="section-title">
-              {isEs ? 'El gran café no tiene\nque ser complicado.' : "Great coffee doesn't\nhave to be complicated."}
-            </h2>
-            <p className="section-sub">
-              {isEs
-                ? 'Responde unas preguntas rápidas y encontraremos los granos perfectos para ti y tu equipo.'
-                : "Answer a few quick questions and we'll match you with great beans for you and your team."}
-            </p>
-          </div>
-
-          <div className="how__grid">
-            {[
-              {
-                num: '01',
-                en: { title: 'Taste',  text: 'Tell us what flavors you like and we\'ll deliver the perfect match every month.', items: ['Chocolate & nut profiles','Fruity & floral profiles','Single origin or blends'] },
-                es: { title: 'Sabor',  text: 'Cuéntanos qué sabores te gustan y entregaremos la combinación perfecta cada mes.', items: ['Perfiles de chocolate y frutos secos','Perfiles afrutados y florales','Origen único o mezclas'] },
-              },
-              {
-                num: '02',
-                en: { title: 'Brew',   text: 'We make sure your coffee arrives ready to brew exactly how you like it.', items: ['Whole bean or ground','Matched to your brew method','Grind size options'] },
-                es: { title: 'Método', text: 'Nos aseguramos de que tu café llegue listo para prepararlo exactamente como más te gusta.', items: ['Grano entero o molido','Adaptado a tu método de preparación','Opciones de molienda'] },
-              },
-              {
-                num: '03',
-                en: { title: 'Supply', text: "We calculate exactly how much your team needs so you never run dry mid-month.", items: ['Based on your team size','250g, 500g or 1kg bags','Adjust any time'] },
-                es: { title: 'Suministro', text: 'Calculamos exactamente cuántos granos necesita tu equipo para que nunca os quedéis sin café.', items: ['Según el tamaño de tu equipo','Bolsas de 250g, 500g o 1kg','Ajústalo cuando quieras'] },
-              },
-            ].map(card => {
-              const c = card[lang] || card.en
-              return (
-                <div className="how__card" key={card.num}>
-                  <div className="how__num">{card.num}</div>
-                  <h3 className="how__title">{c.title}</h3>
-                  <p className="how__text">{c.text}</p>
-                  <ul className="how__list">
-                    {c.items.map(i => <li key={i}>{i}</li>)}
-                  </ul>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-
-      {/* ── COFFEE CALCULATOR ─────────────────────────────────────────────── */}
-      <CoffeeCalculator />
-
-
       {/* ── SUBSCRIPTIONS ──────────────────────────────────────────────────── */}
-      <section className="section" id="subscriptions" style={{ paddingTop: 0 }}>
+      <section className="section home-tiers" id="subscriptions">
         <div className="wrap">
           <div className="sh sh--center">
             <span className="badge">{isEs ? 'Entrega de Café' : 'Coffee Delivery'}</span>
             <h2 className="section-title">{isEs ? 'Elige tu Aventura' : 'Choose Your Adventure'}</h2>
             <p className="section-sub">
               {isEs
-                ? 'Cuatro niveles de café de especialidad — desde tazas fiables para el día a día hasta granos premiados y únicos. Todo seleccionado a mano, entregado cada mes.'
-                : 'Four tiers of specialty coffee — from reliable everyday cups to rare, award-winning beans. All handpicked, delivered every month.'}
+                ? 'Tú eliges el nivel; nosotros seleccionamos el café cada mes.'
+                : 'You choose the tier. We handpick the coffee every month.'}
             </p>
           </div>
         </div>
 
-        <div className="subs__scroll-wrap">
-          <div className="subs__scroll">
-            <div className="subs__track">
-              {tiers.map(tier => (
-                <TierCard key={tier.id} tier={tier} lang={lang} />
-              ))}
+        <div className="wrap">
+          <div className="home-tiers__grid">
+            {tiers.map(tier => <TierCard key={tier.id} tier={tier} lang={lang} />)}
+          </div>
+        </div>
+      </section>
+
+
+      {/* ── ONE-TIME BAG CALLOUT ────────────────────────────────────────────── */}
+      <section className="bag-callout">
+        <div className="wrap">
+          <div className="bag-callout__box">
+            <div>
+              <h2 className="bag-callout__title">{isEs ? '¿Quieres probar una bolsa primero?' : 'Want to try a bag first?'}</h2>
+              <p className="bag-callout__text">
+                {isEs
+                  ? 'Elige cualquier nivel y te seleccionamos una bolsa a mano. Una compra única, sin suscripción.'
+                  : 'Pick any tier and we’ll handpick a bag for you. A one-time purchase, with no subscription required.'}
+              </p>
             </div>
+            <Link to="/store/coffee" className="btn btn--ghost btn--lg">
+              {isEs ? 'Comprar café por bolsa →' : 'Shop coffee by the bag →'}
+            </Link>
           </div>
         </div>
       </section>
@@ -329,7 +233,7 @@ export default function Home() {
                   : 'Swiss-engineered automatic espresso machines built for serious office use. From 30 to 100+ cups per day.',
                 price: fromPrice('jura'),
                 icon: '🇨🇭',
-                slug: '/machines',
+                slug: '/store/machines',
               },
               {
                 brand: 'Behmor',
@@ -339,7 +243,7 @@ export default function Home() {
                   : 'Precision batch brewing for teams that take their filter coffee seriously. Temperature control to 0.1°.',
                 price: fromPrice('behmor'),
                 icon: '☕',
-                slug: '/machines',
+                slug: '/store/machines',
               },
             ].map(m => (
               <div className="machine-preview" key={m.brand}>
@@ -355,16 +259,74 @@ export default function Home() {
                       <span>{isEs ? 'Desde' : 'From'}</span>
                       {m.price}
                     </div>
-                    <Link to={m.slug} className="btn btn--ghost btn--sm">
-                      {isEs ? 'Ver máquinas →' : 'Explore →'}
-                    </Link>
+
                   </div>
                 </div>
               </div>
             ))}
           </div>
+
+          <div style={{ marginTop: 32 }}>
+            <Link to="/store/machines" className="btn btn--yellow">
+              {isEs ? 'Ver máquinas de café' : 'Shop coffee machines'}
+            </Link>
+          </div>
         </div>
       </section>
+
+
+      {/* ── HOW IT WORKS ───────────────────────────────────────────────────── */}
+      <section className="section" id="how">
+        <div className="wrap">
+          <div className="sh sh--center">
+            <span className="badge">{isEs ? 'Cómo Funciona' : 'How It Works'}</span>
+            <h2 className="section-title">
+              {isEs ? 'El gran café no tiene\nque ser complicado.' : "Great coffee doesn't\nhave to be complicated."}
+            </h2>
+            <p className="section-sub">
+              {isEs
+                ? 'Tú eliges el nivel y la cantidad. Nosotros seleccionamos el café, lo tostamos y te lo enviamos cada mes.'
+                : 'You choose the tier and how much. We handpick the coffee, roast it fresh and ship it every month.'}
+            </p>
+          </div>
+
+          <div className="how__grid">
+            {[
+              {
+                num: '01',
+                en: { title: 'Choose your tier', text: 'Pick the level that fits your taste and budget, from everyday Base to rare Summit.', items: ['Base, Explorer, Alpine or Summit', 'Change tier any time', 'Starting from €13 / month'] },
+                es: { title: 'Elige tu nivel', text: 'Escoge el nivel que encaja con tu gusto y presupuesto, desde el Base del día a día hasta el exclusivo Summit.', items: ['Base, Explorer, Alpine o Summit', 'Cambia de nivel cuando quieras', 'Desde 13 € / mes'] },
+              },
+              {
+                num: '02',
+                en: { title: 'We handpick', text: 'Each month we select a coffee for your tier from the best roasters. Never the same coffee two months running.', items: ['Curated for each tier', 'Freshly roasted', 'Whole bean or ground to your brew method'] },
+                es: { title: 'Seleccionamos', text: 'Cada mes elegimos un café para tu nivel entre los mejores tostadores. Nunca el mismo dos meses seguidos.', items: ['Seleccionado para cada nivel', 'Recién tostado', 'En grano o molido para tu método'] },
+              },
+              {
+                num: '03',
+                en: { title: 'Delivered monthly', text: 'Choose the amount you need and we deliver it to your home or office at the start of each month.', items: ['250g, 500g or 1kg bags', 'Free shipping from €30', 'Adjust or cancel any time'] },
+                es: { title: 'Cada mes, en tu puerta', text: 'Elige la cantidad que necesitas y te la llevamos a casa o a la oficina a principios de cada mes.', items: ['Bolsas de 250g, 500g o 1kg', 'Envío gratis desde 30 €', 'Ajusta o cancela cuando quieras'] },
+              },
+            ].map(card => {
+              const c = card[lang] || card.en
+              return (
+                <div className="how__card" key={card.num}>
+                  <div className="how__num">{card.num}</div>
+                  <h3 className="how__title">{c.title}</h3>
+                  <p className="how__text">{c.text}</p>
+                  <ul className="how__list">
+                    {c.items.map(i => <li key={i}>{i}</li>)}
+                  </ul>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+
+      {/* ── COFFEE CALCULATOR ─────────────────────────────────────────────── */}
+      <CoffeeCalculator />
 
 
       {/* ── BLOG PREVIEW ───────────────────────────────────────────────────── */}

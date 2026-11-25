@@ -12,8 +12,9 @@ const SITE_TITLE = 'Butler Coffee — Specialty Coffee for Workspaces'
  *   ''        → site default title (home)
  *   undefined → leave the title alone (pages that set it themselves, e.g. BlogPost)
  * bare: no nav, footer or cart drawer (checkout pages)
+ * subnav: element shown under the site nav (Store sub-menu)
  */
-export default function Layout({ children, noFooter = false, bare = false, title }) {
+export default function Layout({ children, noFooter = false, bare = false, subnav = null, title }) {
   useEffect(() => {
     if (title === undefined) return
     document.title = title ? `${title} · Butler Coffee` : SITE_TITLE
@@ -22,7 +23,8 @@ export default function Layout({ children, noFooter = false, bare = false, title
   return (
     <div className={`layout ${bare ? 'layout--bare' : ''}`}>
       {!bare && <Nav />}
-      <main className="layout__main">{children}</main>
+      {subnav}
+      <main className={`layout__main ${subnav ? 'store-page' : ''}`}>{children}</main>
       {!noFooter && !bare && <Footer />}
       {CART_ENABLED && !bare && <CartDrawer />}
     </div>

@@ -133,7 +133,7 @@ export default function Machines() {
           </p>
           <div className="cta-band__actions">
             <Link to="/contact" className="btn btn--yellow">{t('contact_us')}</Link>
-            <Link to="/subs" className="btn btn--ghost">{isEs ? 'Ver suscripciones →' : 'See subscriptions →'}</Link>
+            <Link to="/subscriptions" className="btn btn--ghost">{isEs ? 'Ver suscripciones →' : 'See subscriptions →'}</Link>
           </div>
         </div>
       </div>
@@ -147,7 +147,7 @@ function MachineCard({ machine: m, lang, isEs, wide }) {
   const cover = m.images?.[0]
 
   return (
-    <Link to={`/machines/${m.slug}`} className={`mcard ${wide ? 'mcard--wide' : ''}`}>
+    <Link to={`/store/machines/${m.slug}`} className={`mcard ${wide ? 'mcard--wide' : ''}`}>
       {tagText && (
         <div className="mcard__badge-wrap">
           <span className={`mcard__tag ${TAG_VARIANTS[m.tagVariant] || ''}`}>
