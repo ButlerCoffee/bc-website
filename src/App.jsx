@@ -14,6 +14,8 @@ import Contact    from './pages/Contact'
 import Portal     from './pages/Portal'
 import Legal      from './pages/Legal'
 import VsPods     from './pages/VsPods'
+import Checkout   from './pages/Checkout'
+import OrderComplete from './pages/OrderComplete'
 
 // Scroll to top on route change
 function ScrollReset() {
@@ -39,6 +41,8 @@ export default function App() {
         <Route path="/contact"            element={<Contact />} />
         <Route path="/portal"             element={<Portal />} />
         <Route path="/legal/:slug"        element={<Legal />} />
+        <Route path="/checkout"           element={<Checkout />} />
+        <Route path="/order/complete"     element={<OrderComplete />} />
         {/* Catch-all → home */}
         <Route path="*"                   element={<Home />} />
       </Routes>

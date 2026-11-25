@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
+import { useCart, CART_ENABLED } from '../context/CartContext'
 import './Nav.css'
 
 const LOGO_URL = '/BC_outlineLogo.svg'
 
 export default function Nav() {
   const { lang, switchLang, t } = useLang()
+  const cart = useCart()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const drawerRef = useRef(null)
@@ -76,6 +78,19 @@ export default function Nav() {
             <button className={`lang-btn ${lang === 'es' ? 'active' : ''}`} onClick={() => switchLang('es')}>ES</button>
           </div>
           <Link to="/subs" className="btn btn--yellow btn--sm nav__cta">{t('nav_cta')}</Link>
+          {CART_ENABLED && (
+            <button
+              className="nav__cart"
+              onClick={cart.open}
+              aria-label={`${lang === 'es' ? 'Carrito' : 'Cart'} (${cart.count})`}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M6 7h12l-1 13H7L6 7z" />
+                <path d="M9 7V5a3 3 0 0 1 6 0v2" />
+              </svg>
+              {cart.count > 0 && <span className="nav__cart-count">{cart.count}</span>}
+            </button>
+          )}
           <button
             className="nav__burger"
             onClick={() => setOpen(o => !o)}

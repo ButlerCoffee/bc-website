@@ -6,6 +6,7 @@ import { renderMarkdown } from '../data/blogApi'
 import Layout from '../components/Layout'
 import './SubTier.css'
 import { fmtEur } from '../data/format'
+import { useCart, CART_ENABLED, GRINDS, MAX_QTY, FREE_SHIPPING_FROM } from '../context/CartContext'
 
 export default function SubTier() {
   const { tier: slug } = useParams()
@@ -15,6 +16,11 @@ export default function SubTier() {
   const isEs = lang === 'es'
 
   const [size, setSize] = useState(() => tier?.sizes?.[0]?.label || '')
+  const cart = useCart()
+  const [mode, setMode] = useState(() => cart.cartType || 'sub')   // 'sub' | 'once'
+  const [grind, setGrind] = useState('whole')
+  const [qty, setQty] = useState(1)
+  const conflict = cart.cartType && cart.cartType !== mode
 
   // While loading don't flash-redirect; once loaded redirect if slug unknown
   if (loading && !tier) return null
@@ -94,6 +100,101 @@ export default function SubTier() {
                   ))}
                 </div>
 
+                {CART_ENABLED ? (
+                  <>
+                    {/* Purchase type */}
+                    <div className="buy-mode" role="radiogroup" aria-label={isEs ? 'Tipo de compra' : 'Purchase type'}>
+                      {[
+                        { id: 'sub',  label: isEs ? 'Suscripción' : 'Subscribe', hint: isEs ? 'cada mes' : 'every month' },
+                        { id: 'once', label: isEs ? 'Compra única' : 'One-off',  hint: isEs ? 'sin suscripción' : 'no subscription' },
+                      ].map(m => (
+                        <button
+                          key={m.id} role="radio" aria-checked={mode === m.id}
+                          className={`buy-mode__opt ${mode === m.id ? 'on' : ''}`}
+                          onClick={() => setMode(m.id)}
+                        >
+                          <span className="buy-mode__label">{m.label}</span>
+                          <span className="buy-mode__hint">{m.hint}</span>
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Grind + quantity */}
+                    <div className="buy-opts">
+                      <label className="buy-opts__grind">
+                        <span className="tier__size-lbl">{isEs ? 'Molienda' : 'Grind'}</span>
+                        <select value={grind} onChange={e => setGrind(e.target.value)}>
+                          {GRINDS.map(g => <option key={g.id} value={g.id}>{g[lang] || g.en}</option>)}
+                        </select>
+                      </label>
+                      <div className="buy-opts__qty">
+                        <span className="tier__size-lbl">{isEs ? 'Bolsas' : 'Bags'}</span>
+                        <div className="qty" role="group" aria-label={isEs ? 'Cantidad' : 'Quantity'}>
+                          <button onClick={() => setQty(q => Math.max(1, q - 1))} disabled={qty <= 1} aria-label={isEs ? 'Quitar una' : 'Decrease'}>−</button>
+                          <span>{qty}</span>
+                          <button onClick={() => setQty(q => Math.min(MAX_QTY, q + 1))} disabled={qty >= MAX_QTY} aria-label={isEs ? 'Añadir una' : 'Increase'}>+</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Price */}
+                    <div className="tier-buy-card__price">
+                      <span className="tier-buy-card__price-num">{fmtEur(currentSize.price * qty, lang)}</span>
+                      {mode === 'sub' && <span className="tier-buy-card__price-per">{isEs ? '/ mes' : '/ mo.'}</span>}
+                    </div>
+                    <p className="tier-buy-card__note">
+                      {qty > 1 ? `${qty} × ` : ''}{isEs ? `bolsa de ${size}` : `${size} bag`}
+                      {' · '}
+                      {currentSize.price * qty >= FREE_SHIPPING_FROM
+                        ? (isEs ? 'envío gratis' : 'free shipping')
+                        : (isEs ? 'envío gratis desde 30 €' : 'free shipping from €30')}
+                    </p>
+
+                    {conflict ? (
+                      <div className="buy-conflict" role="status">
+                        <p>
+                          {cart.cartType === 'sub'
+                            ? (isEs
+                              ? 'Tu carrito tiene suscripciones. Las compras únicas se pagan por separado: finaliza ese pedido primero o vacía el carrito.'
+                              : 'Your cart has subscriptions. One-off bags check out separately: finish that order first, or empty the cart.')
+                            : (isEs
+                              ? 'Tu carrito tiene bolsas sueltas. Las suscripciones se pagan por separado: finaliza ese pedido primero o vacía el carrito.'
+                              : 'Your cart has one-off bags. Subscriptions check out separately: finish that order first, or empty the cart.')}
+                        </p>
+                        <button className="btn btn--full btn--yellow" onClick={cart.open}>
+                          {isEs ? 'Ver carrito' : 'View cart'}
+                        </button>
+                        <button
+                          className="btn btn--full btn--ghost"
+                          onClick={() => {
+                            cart.add({ type: mode, tierId: tier.id, size, grind, qty }, { replace: true })
+                            setQty(1)
+                          }}
+                        >
+                          {isEs ? 'Vaciar carrito y añadir' : 'Empty cart & add this'}
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        className="btn btn--full btn--yellow"
+                        onClick={() => {
+                          cart.add({ type: mode, tierId: tier.id, size, grind, qty })
+                          setQty(1)
+                        }}
+                      >
+                        {isEs ? 'Añadir al carrito' : 'Add to cart'}
+                      </button>
+                    )}
+                    <p className="tier-buy-card__legal">
+                      {mode === 'sub'
+                        ? (isEs ? 'Sin compromiso. Cancela cuando quieras.' : 'No commitment. Cancel any time.')
+                        : (isEs ? 'Un único envío, sin suscripción.' : 'A single delivery, no subscription.')}
+                      <br />
+                      {isEs ? 'Envíos a España, Portugal y Andorra.' : 'Ships to Spain, Portugal and Andorra.'}
+                    </p>
+                  </>
+                ) : (
+                <>
                 {/* Price */}
                 <div className="tier-buy-card__price">
                   <span className="tier-buy-card__price-from">{isEs ? 'desde' : 'from'}</span>
@@ -124,6 +225,8 @@ export default function SubTier() {
                         ? 'Sin suscripción. Envío 5€, gratis desde 30€ con el código ENVIO30.'
                         : 'No subscription. Shipping €5, free from €30 with code ENVIO30.')}
                   </p>
+                )}
+                </>
                 )}
               </div>
             </div>
