@@ -9,6 +9,7 @@ import { getFaqs } from '../data/faqApi'
 import { useFeaturedPosts, formatDate, normalizeDriveUrl } from '../data/blogApi'
 import Layout from '../components/Layout'
 import CoffeeCalculator from '../components/CoffeeCalculator'
+import { PodsDoodle, BagDoodle } from '../components/Doodles'
 import ContactSection from '../components/ContactSection'
 import './Home.css'
 
@@ -212,13 +213,16 @@ export default function Home() {
       <section className="bag-callout">
         <div className="wrap">
           <div className="bag-callout__box">
-            <div>
+            <div className="bag-callout__main">
+              <BagDoodle className="bag-callout__art" />
+              <div>
               <h2 className="bag-callout__title">{isEs ? '¿Quieres probar una bolsa primero?' : 'Want to try a bag first?'}</h2>
               <p className="bag-callout__text">
                 {isEs
                   ? 'Elige cualquier nivel y te seleccionamos una bolsa a mano. Una compra única, sin suscripción.'
                   : 'Pick any tier and we’ll handpick a bag for you. A one-time purchase, with no subscription required.'}
               </p>
+              </div>
             </div>
             <Link to="/store/coffee" className="btn btn--ghost btn--lg">
               {isEs ? 'Comprar café por bolsa →' : 'Shop coffee by the bag →'}
@@ -297,6 +301,21 @@ export default function Home() {
 
       {/* ── COFFEE CALCULATOR ─────────────────────────────────────────────── */}
       <CoffeeCalculator />
+
+      {/* ── SPECIALTY VS PODS LINK ────────────────────────────────────────── */}
+      <section className="bag-callout pods-callout">
+        <div className="wrap">
+          <div className="bag-callout__box">
+            <div className="bag-callout__main">
+              <PodsDoodle className="bag-callout__art" />
+              <h2 className="bag-callout__title">{isEs ? '¿Por qué café de especialidad y no cápsulas?' : 'Why choose specialty over pods?'}</h2>
+            </div>
+            <Link to="/vs-pods" className="btn btn--ghost btn--lg">
+              {isEs ? 'Ver la comparación →' : 'See the comparison →'}
+            </Link>
+          </div>
+        </div>
+      </section>
 
 
       {/* ── MACHINES TEASER ────────────────────────────────────────────────── */}

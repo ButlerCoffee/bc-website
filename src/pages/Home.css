@@ -651,3 +651,14 @@
 .logos-band__logo:hover { opacity: 1; }
 .logos-band__logo img { max-height: 100%; max-width: 160px; width: auto; height: auto; object-fit: contain; }
 @media (min-width: 768px) { .logos-band__logo { height: 42px; } .logos-band__logo img { max-width: 190px; } }
+
+/* Specialty vs pods link, right under the calculator */
+.pods-callout { padding: 56px 0; }
+.pods-callout .bag-callout__title { margin-bottom: 0; }
+
+/* Outline drawings in the callouts (bag, pods) */
+.bag-callout__main { display: flex; align-items: center; gap: 22px; }
+.bag-callout__art { flex: none; color: rgba(255, 255, 255, 0.45); }
+@media (max-width: 520px) {
+  .bag-callout__main { flex-direction: column; align-items: flex-start; gap: 16px; }
+}
