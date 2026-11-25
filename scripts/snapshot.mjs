@@ -61,6 +61,16 @@ async function fetchProducts(url) {
   } catch { return [] }
 }
 
+// Client logos ("Trusted by"); only rows shaped like logos are kept
+async function fetchLogos(url) {
+  try {
+    const res = await fetch(`${url}?sheet=logos`, { redirect: 'follow' })
+    const json = await res.json()
+    if (!json.ok || !Array.isArray(json.data)) return []
+    return json.data.filter(l => l && l.id && l.image && l.name && typeof l.alt === 'object')
+  } catch { return [] }
+}
+
 async function fetchSettings(url) {
   try {
     const res = await fetch(`${url}?sheet=settings`, { redirect: 'follow' })
@@ -76,14 +86,15 @@ if (!url) {
 }
 
 try {
-  const [machines, subs, settings, legal, products] = await Promise.all([
+  const [machines, subs, settings, legal, products, logos] = await Promise.all([
     fetchSheet(url, 'machines'),
     fetchSheet(url, 'subs'),
     fetchSettings(url),
     fetchLegal(url),
     fetchProducts(url),
+    fetchLogos(url),
   ])
-  writeFileSync(OUT, JSON.stringify({ fetchedAt: new Date().toISOString(), machines, subs, settings, legal, products }, null, 1) + '\n')
+  writeFileSync(OUT, JSON.stringify({ fetchedAt: new Date().toISOString(), machines, subs, settings, legal, products, logos }, null, 1) + '\n')
   console.log(`[snapshot] Saved ${machines.length} machines, ${subs.length} subs, ${products.length} products.`)
 } catch (err) {
   console.warn(`[snapshot] Fetch failed (${err.message}) — keeping existing snapshot.`)

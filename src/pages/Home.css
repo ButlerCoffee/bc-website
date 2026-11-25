@@ -640,3 +640,14 @@
     background: linear-gradient(180deg, rgba(10,10,10,0.45) 0%, rgba(10,10,10,0.7) 45%, rgba(10,10,10,0.95) 100%);
   }
 }
+
+/* Machine teaser photos: product shot on white, shown whole */
+.machine-preview__img { background: #fff; overflow: hidden; }
+.machine-preview__img img { width: 100%; height: 100%; object-fit: contain; padding: 18px; }
+
+/* Trusted-by logos (white artwork on the dark band) */
+.logos-band__row { gap: 28px 44px; align-items: center; }
+.logos-band__logo { height: 36px; display: flex; align-items: center; opacity: 0.6; transition: opacity var(--ease); }
+.logos-band__logo:hover { opacity: 1; }
+.logos-band__logo img { max-height: 100%; max-width: 160px; width: auto; height: auto; object-fit: contain; }
+@media (min-width: 768px) { .logos-band__logo { height: 42px; } .logos-band__logo img { max-width: 190px; } }

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useLang } from '../context/LangContext'
 import { useTiers } from '../data/subsApi'
 import { useMachines } from '../data/machinesApi'
+import { useLogos } from '../data/logosApi'
 import { fmtEur } from '../data/format'
 import { getFaqs } from '../data/faqApi'
 import { useFeaturedPosts, formatDate, normalizeDriveUrl } from '../data/blogApi'
@@ -100,9 +101,16 @@ export default function Home() {
   const isEs = lang === 'es'
   const { tiers } = useTiers()
   const { machines } = useMachines()
+  const logos = useLogos()
   const fromPrice = brand => {
     const prices = machines.filter(m => m.brand === brand && m.price > 0).map(m => m.price)
     return prices.length ? fmtEur(Math.min(...prices), lang) : ''
+  }
+  // Photos for the machines teaser: Jura GIGA X8 (pro line) and Behmor Brazen Plus
+  const machinePhoto = (brand, nameMatch) => {
+    const list = machines.filter(m => m.brand === brand && m.images?.length)
+    const m = list.find(x => nameMatch.test(x.name)) || list[0]
+    return m ? { src: m.images[0], alt: `${m.brandName} ${m.name}`, href: `/store/machines/${m.slug}` } : null
   }
 
   // Blog teaser — latest featured posts from API
@@ -227,9 +235,12 @@ export default function Home() {
             {isEs ? 'Con la confianza de oficinas y equipos en toda España' : 'Trusted by offices & teams across Spain'}
           </p>
           <div className="logos-band__row">
-            {['ShuttleCloud','El Güiri Studios','emailprefs','BEARDFACE'].map(name => (
-              <div className="logos-band__chip" key={name}><span>{name}</span></div>
-            ))}
+            {logos.map(l => {
+              const img = <img src={l.image} alt={l.alt[lang] || l.alt.en} loading="lazy" decoding="async" />
+              return l.link
+                ? <a className="logos-band__logo" key={l.id} href={l.link} target="_blank" rel="noopener noreferrer">{img}</a>
+                : <div className="logos-band__logo" key={l.id}>{img}</div>
+            })}
           </div>
         </div>
       </div>
@@ -312,7 +323,7 @@ export default function Home() {
                   ? 'Máquinas automáticas de espresso de ingeniería suiza para uso intensivo en la oficina. De 30 a más de 100 cafés al día.'
                   : 'Swiss-engineered automatic espresso machines built for serious office use. From 30 to 100+ cups per day.',
                 price: fromPrice('jura'),
-                icon: '🇨🇭',
+                photo: machinePhoto('jura', /^GIGA X8$/i),
                 slug: '/store/machines',
               },
               {
@@ -322,14 +333,14 @@ export default function Home() {
                   ? 'Preparación por lotes de precisión para equipos que se toman en serio su café de filtro. Control de temperatura hasta 0,1°.'
                   : 'Precision batch brewing for teams that take their filter coffee seriously. Temperature control to 0.1°.',
                 price: fromPrice('behmor'),
-                icon: '☕',
+                photo: machinePhoto('behmor', /brazen/i),
                 slug: '/store/machines',
               },
             ].map(m => (
               <div className="machine-preview" key={m.brand}>
-                <div className="machine-preview__img">
-                  <span style={{ fontSize: '4rem', opacity: 0.15 }}>{m.icon}</span>
-                </div>
+                <Link to={m.photo?.href || m.slug} className="machine-preview__img">
+                  {m.photo && <img src={m.photo.src} alt={m.photo.alt} loading="lazy" decoding="async" />}
+                </Link>
                 <div className="machine-preview__body">
                   <div className="machine-preview__brand">{m.brand}</div>
                   <h3 className="machine-preview__name">{m.name}</h3>
