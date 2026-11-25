@@ -5,8 +5,18 @@
   font-weight: 900;
   font-size: clamp(2rem, 5vw, 3rem);
   letter-spacing: -0.03em;
-  margin-bottom: 32px;
+  margin-bottom: 10px;
 }
+.co__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.co__brand img { height: 56px; width: auto; }
+.co__brand span { font-family: var(--font-head); font-weight: 900; font-size: 1.05rem; }
+.co__stripe { display: inline-block; margin-bottom: 32px; }
+.co__stripe img { display: block; height: 27px; width: auto; }
 
 .co__grid {
   display: grid;
@@ -186,3 +196,7 @@
 .done h1 em { font-style: normal; color: var(--yellow); }
 .done p { color: var(--muted); line-height: 1.7; }
 .done__actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+
+/* No site header on checkout pages */
+.layout--bare .co { padding-top: 48px; }
+@media (min-width: 768px) { .layout--bare .co { padding-top: 64px; } }

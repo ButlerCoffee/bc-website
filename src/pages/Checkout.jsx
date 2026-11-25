@@ -155,13 +155,21 @@ export default function Checkout() {
   }
 
   return (
-    <Layout title={tx.title}>
+    <Layout title={tx.title} bare>
       <section className="co">
         <div className="wrap">
           <div className="page-hero__eyebrow">
             <Link to="/subs" className="page-hero__back">{tx.back}</Link>
           </div>
+          <Link to="/" className="co__brand" aria-label="Butler Coffee">
+            <img src="/BC_outlineLogo.svg" alt="" />
+            <span>Butler Coffee</span>
+          </Link>
           <h1 className="co__title">{tx.title}</h1>
+          {/* Official badge, unmodified (Stripe marks guidelines); kept smaller than our own brand */}
+          <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" className="co__stripe">
+            <img src="/images/powered-by-stripe-white.svg" alt="Powered by Stripe" width="120" height="27" />
+          </a>
           {body}
         </div>
       </section>

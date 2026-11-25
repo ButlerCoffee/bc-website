@@ -89,7 +89,7 @@ export default function OrderComplete() {
   }
 
   return (
-    <Layout title={tx.title}>
+    <Layout title={tx.title} bare>
       <section className="co">
         <div className="wrap">
           <div className="done">
