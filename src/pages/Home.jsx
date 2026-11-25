@@ -31,7 +31,9 @@ function renderMarkdown(md) {
   }).join('');
 }
 
-const HERO_IMG    = '/images/hero-bag.jpg'
+// Hero background: Pexels "coffee beans cocoa" by Aswin R S (free licence), 720p loop + still
+const HERO_VIDEO  = '/videos/hero-beans.mp4'
+const HERO_POSTER = '/images/hero-beans.jpg'
 const PRINTS_URL  = '/images/footprints.png'
 
 /** Compact homepage tier card: flavour, short description, starting monthly price, link. */
@@ -108,6 +110,16 @@ export default function Home() {
 
   // FAQ — try to load from API, fall back to hardcoded content
   const [apiFaqs, setApiFaqs] = useState(null) // null = not yet tried
+  // Play the hero video on wider screens only; phones, data-saver and
+  // reduced-motion visitors get the still image (saves ~7 MB of mobile data).
+  const [heroVideo, setHeroVideo] = useState(() => {
+    try {
+      const wide = window.matchMedia('(min-width: 768px)').matches
+      const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const saveData = navigator.connection?.saveData === true
+      return wide && !calm && !saveData
+    } catch { return false }
+  })
 
   useEffect(() => {
     getFaqs().then(data => setApiFaqs(data)).catch(() => setApiFaqs([]))
@@ -130,7 +142,16 @@ export default function Home() {
     <Layout title="">
 
       {/* ── HERO ───────────────────────────────────────────────────────────── */}
-      <section className="hero-section" id="home">
+      <section className="hero-section hero-section--media" id="home">
+        <div className="hero-media" aria-hidden="true">
+          <img className="hero-media__img" src={HERO_POSTER} alt="" />
+          {heroVideo && (
+            <video className="hero-media__video" src={HERO_VIDEO} poster={HERO_POSTER}
+              autoPlay muted loop playsInline preload="auto"
+              onError={() => setHeroVideo(false)} />
+          )}
+          <div className="hero-media__shade" />
+        </div>
         <div className="hero">
           <div className="hero__text">
             <span className="badge hero__badge">
@@ -152,15 +173,6 @@ export default function Home() {
                 {isEs ? 'Tienda' : 'Shop'}
               </Link>
             </div>
-          </div>
-
-          <div className="hero__img-wrap">
-            <img
-              className="hero__img"
-              src={HERO_IMG}
-              alt="Butler Coffee specialty bag"
-              onError={e => { e.currentTarget.parentElement.style.display = 'none' }}
-            />
           </div>
         </div>
       </section>
@@ -206,6 +218,74 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+
+      {/* ── LOGOS ──────────────────────────────────────────────────────────── */}
+      <div className="logos-band">
+        <div className="wrap">
+          <p className="logos-band__label">
+            {isEs ? 'Con la confianza de oficinas y equipos en toda España' : 'Trusted by offices & teams across Spain'}
+          </p>
+          <div className="logos-band__row">
+            {['ShuttleCloud','El Güiri Studios','emailprefs','BEARDFACE'].map(name => (
+              <div className="logos-band__chip" key={name}><span>{name}</span></div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── HOW IT WORKS ───────────────────────────────────────────────────── */}
+      <section className="section" id="how">
+        <div className="wrap">
+          <div className="sh sh--center">
+            <span className="badge">{isEs ? 'Cómo Funciona' : 'How It Works'}</span>
+            <h2 className="section-title">
+              {isEs ? 'El gran café no tiene\nque ser complicado.' : "Great coffee doesn't\nhave to be complicated."}
+            </h2>
+            <p className="section-sub">
+              {isEs
+                ? 'Tú eliges el nivel y la cantidad. Nosotros seleccionamos el café, lo tostamos y te lo enviamos cada mes.'
+                : 'You choose the tier and how much. We handpick the coffee, roast it fresh and ship it every month.'}
+            </p>
+          </div>
+
+          <div className="how__grid">
+            {[
+              {
+                num: '01',
+                en: { title: 'Choose your tier', text: 'Pick the level that fits your taste and budget, from everyday Base to rare Summit.', items: ['Base, Explorer, Alpine or Summit', 'Change tier any time', 'Starting from €13 / month'] },
+                es: { title: 'Elige tu nivel', text: 'Escoge el nivel que encaja con tu gusto y presupuesto, desde el Base del día a día hasta el exclusivo Summit.', items: ['Base, Explorer, Alpine o Summit', 'Cambia de nivel cuando quieras', 'Desde 13 € / mes'] },
+              },
+              {
+                num: '02',
+                en: { title: 'We handpick', text: 'Each month we select a coffee for your tier from the best roasters. Never the same coffee two months running.', items: ['Curated for each tier', 'Freshly roasted', 'Whole bean or ground to your brew method'] },
+                es: { title: 'Seleccionamos', text: 'Cada mes elegimos un café para tu nivel entre los mejores tostadores. Nunca el mismo dos meses seguidos.', items: ['Seleccionado para cada nivel', 'Recién tostado', 'En grano o molido para tu método'] },
+              },
+              {
+                num: '03',
+                en: { title: 'Delivered monthly', text: 'Choose the amount you need and we deliver it to your home or office at the start of each month.', items: ['250g, 500g or 1kg bags', 'Free shipping from €30', 'Adjust or cancel any time'] },
+                es: { title: 'Cada mes, en tu puerta', text: 'Elige la cantidad que necesitas y te la llevamos a casa o a la oficina a principios de cada mes.', items: ['Bolsas de 250g, 500g o 1kg', 'Envío gratis desde 30 €', 'Ajusta o cancela cuando quieras'] },
+              },
+            ].map(card => {
+              const c = card[lang] || card.en
+              return (
+                <div className="how__card" key={card.num}>
+                  <div className="how__num">{card.num}</div>
+                  <h3 className="how__title">{c.title}</h3>
+                  <p className="how__text">{c.text}</p>
+                  <ul className="how__list">
+                    {c.items.map(i => <li key={i}>{i}</li>)}
+                  </ul>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+
+      {/* ── COFFEE CALCULATOR ─────────────────────────────────────────────── */}
+      <CoffeeCalculator />
 
 
       {/* ── MACHINES TEASER ────────────────────────────────────────────────── */}
@@ -275,60 +355,6 @@ export default function Home() {
       </section>
 
 
-      {/* ── HOW IT WORKS ───────────────────────────────────────────────────── */}
-      <section className="section" id="how">
-        <div className="wrap">
-          <div className="sh sh--center">
-            <span className="badge">{isEs ? 'Cómo Funciona' : 'How It Works'}</span>
-            <h2 className="section-title">
-              {isEs ? 'El gran café no tiene\nque ser complicado.' : "Great coffee doesn't\nhave to be complicated."}
-            </h2>
-            <p className="section-sub">
-              {isEs
-                ? 'Tú eliges el nivel y la cantidad. Nosotros seleccionamos el café, lo tostamos y te lo enviamos cada mes.'
-                : 'You choose the tier and how much. We handpick the coffee, roast it fresh and ship it every month.'}
-            </p>
-          </div>
-
-          <div className="how__grid">
-            {[
-              {
-                num: '01',
-                en: { title: 'Choose your tier', text: 'Pick the level that fits your taste and budget, from everyday Base to rare Summit.', items: ['Base, Explorer, Alpine or Summit', 'Change tier any time', 'Starting from €13 / month'] },
-                es: { title: 'Elige tu nivel', text: 'Escoge el nivel que encaja con tu gusto y presupuesto, desde el Base del día a día hasta el exclusivo Summit.', items: ['Base, Explorer, Alpine o Summit', 'Cambia de nivel cuando quieras', 'Desde 13 € / mes'] },
-              },
-              {
-                num: '02',
-                en: { title: 'We handpick', text: 'Each month we select a coffee for your tier from the best roasters. Never the same coffee two months running.', items: ['Curated for each tier', 'Freshly roasted', 'Whole bean or ground to your brew method'] },
-                es: { title: 'Seleccionamos', text: 'Cada mes elegimos un café para tu nivel entre los mejores tostadores. Nunca el mismo dos meses seguidos.', items: ['Seleccionado para cada nivel', 'Recién tostado', 'En grano o molido para tu método'] },
-              },
-              {
-                num: '03',
-                en: { title: 'Delivered monthly', text: 'Choose the amount you need and we deliver it to your home or office at the start of each month.', items: ['250g, 500g or 1kg bags', 'Free shipping from €30', 'Adjust or cancel any time'] },
-                es: { title: 'Cada mes, en tu puerta', text: 'Elige la cantidad que necesitas y te la llevamos a casa o a la oficina a principios de cada mes.', items: ['Bolsas de 250g, 500g o 1kg', 'Envío gratis desde 30 €', 'Ajusta o cancela cuando quieras'] },
-              },
-            ].map(card => {
-              const c = card[lang] || card.en
-              return (
-                <div className="how__card" key={card.num}>
-                  <div className="how__num">{card.num}</div>
-                  <h3 className="how__title">{c.title}</h3>
-                  <p className="how__text">{c.text}</p>
-                  <ul className="how__list">
-                    {c.items.map(i => <li key={i}>{i}</li>)}
-                  </ul>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-
-      {/* ── COFFEE CALCULATOR ─────────────────────────────────────────────── */}
-      <CoffeeCalculator />
-
-
       {/* ── BLOG PREVIEW ───────────────────────────────────────────────────── */}
       <section className="section" id="blog">
         <div className="wrap">
@@ -387,20 +413,6 @@ export default function Home() {
         </div>
       </section>
 
-
-      {/* ── LOGOS ──────────────────────────────────────────────────────────── */}
-      <div className="logos-band">
-        <div className="wrap">
-          <p className="logos-band__label">
-            {isEs ? 'Con la confianza de oficinas y equipos en toda España' : 'Trusted by offices & teams across Spain'}
-          </p>
-          <div className="logos-band__row">
-            {['ShuttleCloud','El Güiri Studios','emailprefs','BEARDFACE'].map(name => (
-              <div className="logos-band__chip" key={name}><span>{name}</span></div>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* ── CONTACT ────────────────────────────────────────────────────────── */}
       <ContactSection />

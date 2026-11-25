@@ -7,6 +7,10 @@ import './Footer.css'
 const LOGO_URL   = '/BC_outlineLogo.svg'
 const PRINTS_URL = '/images/footprints.png'
 
+// Contact details in the footer brand column
+const INSTAGRAM = { handle: '@butlercoffeemadrid', url: 'https://www.instagram.com/butlercoffeemadrid/' }
+const PHONE = ''   // e.g. '+34 600 000 000' — shown only once filled in
+
 export default function Footer() {
   const { lang, t } = useLang()
   const year = new Date().getFullYear()
@@ -26,7 +30,6 @@ export default function Footer() {
     { to: '/about',   label: t('nav_about') },
     { to: '/contact', label: t('nav_contact') },
     { href: '/#faq',  label: 'FAQ' },
-    { href: `mailto:${settings.contactEmail}`, label: settings.contactEmail },
   ]
 
   return (
@@ -38,9 +41,39 @@ export default function Footer() {
           {/* Brand */}
           <div className="footer__brand-col">
             <Link to="/" className="footer__logo">
-              <img src={LOGO_URL} alt="Butler Coffee" className="footer__logo-img" />
+              <img src={LOGO_URL} alt="" className="footer__logo-img" />
+              <span className="footer__name">Butler Coffee</span>
             </Link>
-            <p className="footer__tagline">{t('footer_tag')}</p>
+            <ul className="footer__contact">
+              <li>
+                <a href={INSTAGRAM.url} target="_blank" rel="noopener noreferrer">
+                  <span className="footer__contact-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>
+                  </span>
+                  {INSTAGRAM.handle}
+                </a>
+              </li>
+              {settings.contactEmail && (
+                <li>
+                  <a href={`mailto:${settings.contactEmail}`}>
+                    <span className="footer__contact-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></svg>
+                    </span>
+                    {settings.contactEmail}
+                  </a>
+                </li>
+              )}
+              {PHONE && (
+                <li>
+                  <a href={`tel:${PHONE.replace(/\s/g, '')}`}>
+                    <span className="footer__contact-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" /></svg>
+                    </span>
+                    {PHONE}
+                  </a>
+                </li>
+              )}
+            </ul>
           </div>
 
           {/* Product */}

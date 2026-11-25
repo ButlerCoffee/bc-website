@@ -602,3 +602,41 @@
 .section.home-tiers { padding-top: 40px; }
 .hero__text { position: relative; z-index: 1; }
 @media (max-width: 480px) { .hero__headline { font-size: 2.4rem; } }
+
+/* ─── Hero with background video (still image as backup) ─────────────────── */
+.hero-section--media { position: relative; overflow: hidden; }
+.hero-media { position: absolute; inset: 0; z-index: 0; }
+.hero-media__img,
+.hero-media__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+/* dark on the text side, letting the golden beans glow through on the right */
+.hero-media__shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.72) 45%, rgba(10,10,10,0.35) 100%),
+    linear-gradient(180deg, rgba(10,10,10,0.25) 0%, rgba(10,10,10,0) 40%, rgba(10,10,10,0.85) 100%);
+}
+.hero-section--media .hero {
+  position: relative;
+  z-index: 1;
+  grid-template-columns: 1fr;
+  min-height: min(82vh, 720px);
+  padding-bottom: 64px;
+}
+@media (min-width: 860px) {
+  .hero-section--media .hero { grid-template-columns: 1fr; min-height: min(82vh, 720px); }
+}
+.hero-section--media .hero__sub { color: rgba(255,255,255,0.78); }
+@media (max-width: 859px) {
+  .hero-section--media .hero { min-height: 72vh; align-content: end; }
+  .hero-media__shade {
+    background: linear-gradient(180deg, rgba(10,10,10,0.45) 0%, rgba(10,10,10,0.7) 45%, rgba(10,10,10,0.95) 100%);
+  }
+}
