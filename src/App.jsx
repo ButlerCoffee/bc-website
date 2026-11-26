@@ -20,6 +20,7 @@ import StoreProducts from './pages/StoreProducts'
 import ProductPage  from './pages/ProductPage'
 import OrderComplete from './pages/OrderComplete'
 import Calculator from './pages/Calculator'
+import JuraLine from './pages/JuraLine'
 
 // Scroll to top on route change, or to #section when the link has one
 function ScrollReset() {
@@ -58,6 +59,7 @@ export default function App() {
         <Route path="/store/goods"             element={<StoreProducts />} />
         <Route path="/store/product/:slug"     element={<ProductPage />} />
         <Route path="/store/machines"          element={<Machines />} />
+        <Route path="/store/machines/jura"      element={<JuraLine />} />
         <Route path="/store/machines/:machine" element={<MachinePage />} />
 
         {/* Old addresses */}

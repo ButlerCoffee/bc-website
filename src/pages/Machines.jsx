@@ -142,7 +142,7 @@ export default function Machines() {
   )
 }
 
-function MachineCard({ machine: m, lang, isEs, wide }) {
+export function MachineCard({ machine: m, lang, isEs, wide }) {
   const tagText = (m.tag?.[lang] || m.tag?.en || '').trim()
   const cover = m.images?.[0]
 

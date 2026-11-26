@@ -342,8 +342,8 @@ export default function Home() {
                   ? 'Máquinas automáticas de espresso de ingeniería suiza para uso intensivo en la oficina. De 30 a más de 100 cafés al día.'
                   : 'Swiss-engineered automatic espresso machines built for serious office use. From 30 to 100+ cups per day.',
                 price: fromPrice('jura'),
-                photo: machinePhoto('jura', /^GIGA X8$/i),
-                slug: '/store/machines',
+                photo: { ...machinePhoto('jura', /^GIGA X8$/i), href: '/store/machines/jura' },
+                slug: '/store/machines/jura',
               },
               {
                 brand: 'Behmor',

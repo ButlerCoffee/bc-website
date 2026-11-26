@@ -28,6 +28,10 @@ export default function TierBuyCard({ tier, lang, mode = 'once' }) {
       </Link>
       <div className="pcard__body">
         <Link to={href} className="pcard__name">{tier.name}</Link>
+        {(tier.description?.[lang] || tier.description?.en) && (
+          <p className="pcard__line">{tier.description[lang] || tier.description.en}</p>
+        )}
+        <Link to={href} className="pcard__more">{isEs ? 'Más información →' : 'Learn more →'}</Link>
 
         <div className="pcard__sizes" role="radiogroup" aria-label={isEs ? 'Tamaño' : 'Size'}>
           {tier.sizes.map(s => (
@@ -61,7 +65,12 @@ export default function TierBuyCard({ tier, lang, mode = 'once' }) {
           {isSub && <small>{isEs ? '/ mes' : '/ mo.'}</small>}
           <small>{total >= FREE_SHIPPING_FROM ? (isEs ? 'envío gratis' : 'free shipping') : (isEs ? '+ envío' : '+ shipping')}</small>
         </div>
-        <AddToCart item={{ type: mode, tierId: tier.id, size, grind, qty }} onAdded={() => setQty(1)} />
+        {/* Main button for this page's order type, plus the other one as a lighter option */}
+        <AddToCart item={{ type: mode, tierId: tier.id, size, grind, qty }} onAdded={() => setQty(1)}
+          label={isSub ? (isEs ? 'Añadir suscripción' : 'Add Subscription') : (isEs ? 'Añadir bolsa al carrito' : 'Add bag to cart')} />
+        <AddToCart item={{ type: isSub ? 'once' : 'sub', tierId: tier.id, size, grind, qty }} onAdded={() => setQty(1)}
+          className="btn btn--full btn--ghost pcard__alt"
+          label={isSub ? (isEs ? 'Añadir bolsa al carrito' : 'Add bag to cart') : (isEs ? 'Añadir suscripción' : 'Add Subscription')} />
       </div>
     </article>
   )

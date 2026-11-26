@@ -309,3 +309,6 @@
 
 /* Home-page Subscribe/Buy jump here; stop below the fixed nav */
 #buy { scroll-margin-top: calc(var(--nav-h) + 16px); }
+
+/* Second order-type button under the main one */
+.tier-buy-card .btn--full + .btn--full { margin-top: 10px; }

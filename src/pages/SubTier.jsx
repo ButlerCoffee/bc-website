@@ -4,6 +4,7 @@ import { useLang } from '../context/LangContext'
 import { useTiers, getTierBySlug } from '../data/subsApi'
 import { renderMarkdown } from '../data/blogApi'
 import Layout from '../components/Layout'
+import AddToCart from '../components/AddToCart'
 import './SubTier.css'
 import { fmtEur } from '../data/format'
 import { useCart, CART_ENABLED, GRINDS, MAX_QTY, FREE_SHIPPING_FROM } from '../context/CartContext'
@@ -36,7 +37,6 @@ export default function SubTier({ fixedMode }) {
   const mode = fixedMode || chosenMode
   const [grind, setGrind] = useState('whole')
   const [qty, setQty] = useState(1)
-  const conflict = cart.cartType && cart.cartType !== mode
 
 
   // While loading don't flash-redirect; once loaded redirect if slug unknown
@@ -172,41 +172,18 @@ export default function SubTier({ fixedMode }) {
                         : (isEs ? 'envío gratis desde 30 €' : 'free shipping from €30')}
                     </p>
 
-                    {conflict ? (
-                      <div className="buy-conflict" role="status">
-                        <p>
-                          {cart.cartType === 'sub'
-                            ? (isEs
-                              ? 'Tu carrito tiene suscripciones. Las compras únicas se pagan por separado: finaliza ese pedido primero o vacía el carrito.'
-                              : 'Your cart has subscriptions. One-off bags check out separately: finish that order first, or empty the cart.')
-                            : (isEs
-                              ? 'Tu carrito tiene bolsas sueltas. Las suscripciones se pagan por separado: finaliza ese pedido primero o vacía el carrito.'
-                              : 'Your cart has one-off bags. Subscriptions check out separately: finish that order first, or empty the cart.')}
-                        </p>
-                        <button className="btn btn--full btn--yellow" onClick={cart.open}>
-                          {isEs ? 'Ver carrito' : 'View cart'}
-                        </button>
-                        <button
-                          className="btn btn--full btn--ghost"
-                          onClick={() => {
-                            cart.add({ type: mode, tierId: tier.id, size, grind, qty }, { replace: true })
-                            setQty(1)
-                          }}
-                        >
-                          {isEs ? 'Vaciar carrito y añadir' : 'Empty cart & add this'}
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        className="btn btn--full btn--yellow"
-                        onClick={() => {
-                          cart.add({ type: mode, tierId: tier.id, size, grind, qty })
-                          setQty(1)
-                        }}
-                      >
-                        {isEs ? 'Añadir al carrito' : 'Add to cart'}
-                      </button>
-                    )}
+                    {/* Both order types; this page's type gets the yellow button */}
+                    {[mode, mode === 'sub' ? 'once' : 'sub'].map((type, i) => (
+                      <AddToCart
+                        key={type}
+                        item={{ type, tierId: tier.id, size, grind, qty }}
+                        onAdded={() => setQty(1)}
+                        className={`btn btn--full ${i === 0 ? 'btn--yellow' : 'btn--ghost'}`}
+                        label={type === 'sub'
+                          ? (isEs ? 'Añadir suscripción' : 'Add Subscription')
+                          : (isEs ? 'Añadir bolsa al carrito' : 'Add bag to cart')}
+                      />
+                    ))}
                     <p className="tier-buy-card__legal">
                       {mode === 'sub'
                         ? (isEs ? 'Sin compromiso. Cancela cuando quieras.' : 'No commitment. Cancel any time.')
