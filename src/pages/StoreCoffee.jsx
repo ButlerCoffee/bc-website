@@ -8,7 +8,6 @@ import { fmtEur } from '../data/format'
 import Layout from '../components/Layout'
 import AddToCart from '../components/AddToCart'
 import TierBuyCard from '../components/TierBuyCard'
-import { renderMarkdown } from '../data/blogApi'
 import './Store.css'
 import './SubTier.css'
 import './Subs.css'
@@ -24,13 +23,17 @@ function FeatureProduct({ p, lang }) {
   const [qty, setQty] = useState(1)
   const placeholder = !p
   const name = p ? p.name[lang] : 'Pack Navidad'
-  const img = p?.images?.[0]
+  const [imgIdx, setImgIdx] = useState(0)   // skip photos that fail to load
+  const img = p?.images?.[imgIdx]
+  const nextImg = () => setImgIdx(i => i + 1)
   const price = p?.price || 0
 
   return (
     <section className={`feature-product ${placeholder ? 'feature-product--soon' : ''}`} aria-labelledby={`fp-${p?.slug || 'navidad'}`}>
       <div className={`feature-product__media ${img ? '' : 'feature-product__media--placeholder'}`}>
-        <img src={img || '/BC_outlineLogo.svg'} alt={img ? name : ''} loading="lazy" decoding="async" />
+        {placeholder
+          ? <img src={img || '/BC_outlineLogo.svg'} alt={img ? name : ''} loading="lazy" decoding="async" />
+          : <Link to={`/store/product/${p.slug}`}><img key={img} src={img || '/BC_outlineLogo.svg'} alt={img ? name : ''} loading="lazy" decoding="async" onError={img ? nextImg : undefined} /></Link>}
         {placeholder
           ? <span className="pcard__badge">{isEs ? 'Próximamente' : 'Coming soon'}</span>
           : p.soldOut
@@ -39,16 +42,17 @@ function FeatureProduct({ p, lang }) {
       </div>
 
       <div className="feature-product__info">
-        <h2 id={`fp-${p?.slug || 'navidad'}`} className="feature-product__name">{name}</h2>
+        <h2 id={`fp-${p?.slug || 'navidad'}`} className="feature-product__name">
+          {placeholder ? name : <Link to={`/store/product/${p.slug}`}>{name}</Link>}
+        </h2>
+        {!placeholder && p.tagline[lang] && <p className="feature-product__tagline">{p.tagline[lang]}</p>}
         {placeholder ? (
           <p className="feature-product__desc">
             {isEs
               ? 'Nuestro pack de Navidad llega muy pronto. Foto, descripción y precio, en breve.'
               : 'Our Christmas pack is coming soon. Photo, description and price to follow.'}
           </p>
-        ) : p.description[lang] && (
-          <div className="feature-product__desc md-rendered" dangerouslySetInnerHTML={{ __html: renderMarkdown(p.description[lang]) }} />
-        )}
+        ) : null /* short description (tagline) only; the full text is on the product page */}
 
         <div className="feature-product__buy">
           <div className="pcard__price">
@@ -83,6 +87,9 @@ function FeatureProduct({ p, lang }) {
             </button>
           ) : (
             <AddToCart item={{ type: 'once', productId: p.slug, grind: p.grind ? grind : '', qty }} onAdded={() => setQty(1)} />
+          )}
+          {!placeholder && (
+            <Link to={`/store/product/${p.slug}`} className="pcard__more">{isEs ? 'Ver el producto →' : 'View product →'}</Link>
           )}
         </div>
       </div>

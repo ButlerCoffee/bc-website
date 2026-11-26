@@ -18,12 +18,16 @@ export default function ProductPage() {
   const { products, loading } = useProducts()
   const p = getProduct(products, slug)
   const [img, setImg] = useState(0)
+  const [broken, setBroken] = useState([])   // photos that failed to load are skipped
   const [grind, setGrind] = useState('whole')
   const [qty, setQty] = useState(1)
 
   if (!p) return loading ? null : <Navigate to="/store/coffee" replace />
 
   const back = p.category === 'goods' ? '/store/goods' : '/store/coffee'
+  const images = p.images.filter(u => !broken.includes(u))
+  const current = images[Math.min(img, images.length - 1)]
+  const markBroken = u => setBroken(b => (b.includes(u) ? b : [...b, u]))
   const total = p.price * qty
 
   return (
@@ -39,15 +43,15 @@ export default function ProductPage() {
           <div className="pdp__grid">
             <div>
               <div className="pdp__main">
-                {p.images[img]
-                  ? <img src={p.images[img]} alt={p.name[lang]} />
+                {current
+                  ? <img src={current} alt={p.name[lang]} onError={() => markBroken(current)} />
                   : <img src="/BC_outlineLogo.svg" alt="" style={{ width: 140, height: 140, objectFit: 'contain', opacity: 0.4 }} />}
               </div>
-              {p.images.length > 1 && (
+              {images.length > 1 && (
                 <div className="pdp__thumbs">
-                  {p.images.map((u, i) => (
-                    <button key={u + i} className={i === img ? 'on' : ''} onClick={() => setImg(i)} aria-label={`${isEs ? 'Foto' : 'Photo'} ${i + 1}`}>
-                      <img src={u} alt="" />
+                  {images.map((u, i) => (
+                    <button key={u + i} className={u === current ? 'on' : ''} onClick={() => setImg(i)} aria-label={`${isEs ? 'Foto' : 'Photo'} ${i + 1}`}>
+                      <img src={u} alt="" onError={() => markBroken(u)} />
                     </button>
                   ))}
                 </div>
@@ -57,11 +61,11 @@ export default function ProductPage() {
             <div className="pdp__info">
               {p.badge[lang] && <span className="badge" style={{ alignSelf: 'flex-start' }}>{p.badge[lang]}</span>}
               <h1 className="pdp__name">{p.name[lang]}</h1>
+              {p.tagline[lang] && <p className="pdp__tagline">{p.tagline[lang]}</p>}
 
               <div className="pdp__buy">
                 <div className="pdp__price">
                   {fmtEur(total, lang)}
-                  {p.size && <span style={{ fontSize: '0.9rem', color: 'var(--muted)', fontWeight: 500, marginLeft: 8 }}>{qty > 1 ? `${qty} × ` : ''}{p.size}</span>}
                 </div>
 
                 {!p.soldOut && (
@@ -99,11 +103,13 @@ export default function ProductPage() {
                 </p>
               </div>
 
-              {p.description[lang] && (
-                <div className="pdp__desc md-rendered" dangerouslySetInnerHTML={{ __html: renderMarkdown(p.description[lang]) }} />
-              )}
             </div>
           </div>
+
+          {/* Full description below the photos and buying options */}
+          {p.description[lang] && (
+            <div className="pdp__desc pdp__desc--full md-rendered" dangerouslySetInnerHTML={{ __html: renderMarkdown(p.description[lang]) }} />
+          )}
         </div>
       </section>
     </Layout>
