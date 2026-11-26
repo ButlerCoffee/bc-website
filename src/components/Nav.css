@@ -181,3 +181,19 @@
   /* logo and right cluster take only what they need; the menu sits between */
   .nav__logo, .nav__right   { flex: 0 0 auto; }
 }
+
+/* "Beta" tag next to the logo while the new site settles in */
+.nav__beta {
+  align-self: center;
+  margin-left: 2px;
+  padding: 2px 7px;
+  border: 1px solid var(--yellow-30);
+  border-radius: var(--r-pill);
+  background: var(--yellow-dim);
+  color: var(--yellow);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}

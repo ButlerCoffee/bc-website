@@ -65,6 +65,7 @@ export default function Nav() {
         <Link to="/" className="nav__logo">
           <img src={LOGO_URL} alt="" className="nav__logo-img" />
           <span className="nav__logo-name">Butler Coffee</span>
+          <span className="nav__beta">Beta</span>
         </Link>
 
         {/* Desktop links */}
