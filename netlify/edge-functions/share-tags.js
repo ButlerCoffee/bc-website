@@ -9,7 +9,7 @@
  */
 
 const SITE = 'Butler Coffee'
-const ORIGIN = 'https://www.butler.coffee'   // canonical host for links and images
+const ORIGIN = 'https://butler.coffee'   // canonical host for links and images
 const API_FALLBACK = 'https://script.google.com/macros/s/AKfycbxtOnlGpNsZHyV9UeDbhEsoQEo_pooQ76T9q7Dfqazm6iD5Bf_DlnyZg6SRm0nYElAd/exec'
 const DEFAULT_IMAGE = '/images/og-default.jpg'
 const DEFAULT = {
