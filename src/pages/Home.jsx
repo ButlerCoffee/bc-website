@@ -171,8 +171,8 @@ export default function Home() {
             </h1>
             <p className="hero__sub">
               {isEs
-                ? 'Un buen café alegra el día. Suscríbete y recibe café de especialidad seleccionado a mano a principios de cada mes.'
-                : 'Better coffee makes for brighter days. Subscribe to get handpicked specialty coffee delivered to you at the start of each month.'}
+                ? 'Un buen café alegra el día. Recibe café de especialidad a principios de cada mes con nuestra suscripción pensada para espacios de trabajo, equipos y ejércitos de uno.'
+                : 'Better coffee makes for brighter days. Get specialty coffee at the start of each month with our subscription built for workspaces, teams & armies of one.'}
             </p>
             <div className="hero__actions">
               <Link to="/subscriptions" className="btn btn--yellow btn--lg hero__cta-main">

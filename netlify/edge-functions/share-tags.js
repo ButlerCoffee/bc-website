@@ -13,13 +13,13 @@ const ORIGIN = 'https://butler.coffee'   // canonical host for links and images
 const API_FALLBACK = 'https://script.google.com/macros/s/AKfycbxtOnlGpNsZHyV9UeDbhEsoQEo_pooQ76T9q7Dfqazm6iD5Bf_DlnyZg6SRm0nYElAd/exec'
 const DEFAULT_IMAGE = '/images/og-default.jpg'
 const DEFAULT = {
-  title: 'Butler Coffee — Specialty Coffee for Workspaces',
-  description: 'Monthly specialty coffee subscriptions for workspaces, teams and armies of one. Delivered to your door.',
+  title: 'Butler Coffee — Subscription Specialty Coffee for Workspaces, Teams & Armies of One',
+  description: 'Better coffee makes for brighter days. Get specialty coffee at the start of each month with our subscription built for workspaces, teams & armies of one.',
 }
 
 // Fixed pages. Anything not listed gets DEFAULT.
 const PAGES = {
-  '/subscriptions': { title: 'Coffee Subscriptions — Butler Coffee', description: 'Four ways to explore specialty coffee, delivered every month. Find the one that feels like you.' },
+  '/subscriptions': { title: 'Subscription Specialty Coffee for Workspaces, Teams & Armies of One — Butler Coffee', description: 'Four ways to explore specialty coffee, delivered every month. Find the one that feels like you.' },
   '/store/coffee':  { title: 'Coffee by the Bag — Butler Coffee', description: 'Specialty coffee by the bag, no subscription needed.' },
   '/store/machines':      { title: 'Coffee Machines — Butler Coffee', description: 'Coffee machines for offices and workspaces, set up and supported by Butler Coffee.' },
   '/store/machines/jura': { title: 'Jura Professional Line — Butler Coffee', description: 'Jura professional bean-to-cup machines for offices.' },
